@@ -1,0 +1,18 @@
+Authors: Owen Xu, Chloe Xufeng
+
+Dataset: Crime Data from 2020 to Present  
+Source: https://catalog.data.gov/dataset/crime-data-from-2020-to-present 
+Instructions: Click on the "Download" button at the right of "Comma separated values file" to get the data. 
+
+User stories:
+Story: As a resident, I want to search for crimes in my neighborhood, so that I can stay informed and take precautions.
+Implementation: A search bar with autocomplete for neighborhood names and a table displaying relevant incidents.
+
+Story: As a city planner, I want to visualize crime patterns on an interactive map, so that I can allocate safety resources efficiently.
+Implementation: A map with pins and heatmap overlays, filterable by crime type and date range.
+
+Story: As a journalist, I want to download data for a selected region and time range, so that I can use it for reporting.
+Implementation: Date picker + area selector + export button to download filtered CSV data.
+
+Story: As a concerned parent, I want to view crime trends over time, so that I can understand whether an area is becoming more or less safe.
+Implementation: A line graph displaying crime volume over time, filterable by type (e.g., theft, assault).
