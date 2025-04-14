@@ -9,7 +9,7 @@ Story: As a resident, I want to search for crimes in my neighborhood, so that I 
 Implementation: A search bar with autocomplete for neighborhood names and a table displaying relevant incidents.
 
 Story: As a journalist, I want to download data for a selected region and time range, so that I can use it for reporting.
-Implementation: Date picker + area selector + export button to download filtered CSV data.
+Implementation: Date picker + location selector + export button to download filtered CSV data. Also, building victim demographics to see the generalization. 
 
 Story: As a concerned parent, I want to view crime trends over time, so that I can understand whether an area is becoming more or less safe.
 Implementation: A line graph displaying crime volume over time, filterable by type (e.g., theft, assault).
