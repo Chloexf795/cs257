@@ -35,7 +35,6 @@ def main():
     parser = argparse.ArgumentParser(description="Query crimes by area name.")
     subparsers = parser.add_subparsers(dest="command")
 
-    # Subcommand: crimesbyareaname
     area_parser = subparsers.add_parser("crimesbyareaname", help="Show all crimes in a given AREA NAME")
     area_parser.add_argument("areaname", type=str, help="The AREA NAME to search for (e.g., Wilshire)")
 
