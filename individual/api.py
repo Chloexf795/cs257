@@ -7,25 +7,32 @@ Date: 2025-04-16
 Citation: Based on flask_sample.py provided in course materials.
 """
 
-from flask import Flask, request, jsonify
+import flask
 import csv
+import json
+import argparse
 
-app = Flask(__name__)
+app = flask.Flask(__name__)
 
 DATA_FILE = "../data/crime-data.csv"
+
+# -- Root --
+@app.route('/')
+def index():
+    return 'Welcome to the Crime API! Try /help or /crimesbyareaname?name=Central'
 
 # -- Endpoint 1: Main functionality --
 @app.route("/crimesbyareaname")
 def crimes_by_area():
-    area = request.args.get("name", "")
+    area = flask.request.args.get("name", "")
     if not area:
-        return jsonify({"error": "Missing 'name' parameter in query string"}), 400
+        return json.dumps({"error": "Missing 'name' parameter in query string"}), 400, {'Content-Type': 'application/json'}
 
     results = []
     try:
         with open(DATA_FILE, newline='', encoding='utf-8') as csvfile:
             reader = csv.DictReader(csvfile)
-            reader.fieldnames = [name.strip() for name in reader.fieldnames]  # clean headers
+            reader.fieldnames = [name.strip() for name in reader.fieldnames]
             for row in reader:
                 if row['AREA NAME'].strip().lower() == area.lower():
                     results.append({
@@ -33,16 +40,16 @@ def crimes_by_area():
                         "description": row['Crm Cd Desc']
                     })
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        return json.dumps({"error": str(e)}), 500, {'Content-Type': 'application/json'}
 
-    return jsonify({
+    response = {
         "area": area,
         "count": len(results),
         "crimes": results
-    })
+    }
+    return json.dumps(response), 200, {'Content-Type': 'application/json'}
 
-
-# -- Endpoint 2: Help endpoint --
+# -- Endpoint 2: Help --
 @app.route("/help")
 def help():
     return """
@@ -67,10 +74,9 @@ def help():
 
 # -- Run the app --
 if __name__ == "__main__":
-    import sys
-    if len(sys.argv) != 3:
-        print("Usage: python3 api.py host port")
-    else:
-        host = sys.argv[1]
-        port = int(sys.argv[2])
-        app.run(host=host, port=port)
+    parser = argparse.ArgumentParser(description="Crime API Server")
+    parser.add_argument("host", help="Host to run the server on (e.g. localhost)")
+    parser.add_argument("port", type=int, help="Port to run the server on (e.g. 9999)")
+    args = parser.parse_args()
+
+    app.run(host=args.host, port=args.port, debug=True)
