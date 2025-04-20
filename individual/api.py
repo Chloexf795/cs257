@@ -19,7 +19,7 @@ DATA_FILE = "../data/crime-data.csv"
 # -- Root --
 @app.route('/')
 def index():
-    return 'Welcome to the Crime API! Try /help or /crimesbyareaname?name=Central'
+    return 'This is Crime API. Try /help or /crimesbyareaname?name=Central'
 
 # -- Endpoint 1: Main functionality --
 @app.route("/crimesbyareaname")
