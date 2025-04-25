@@ -8,6 +8,20 @@ EXAMPLE:
 /rawcsv
 Triggers download of crime_data.csv
 
+REQUEST: /area
+
+RESPONSE: a JSON list, each of which represents one district.
+
+EXAMPLE: /area
+{0: "Central", 1: "Wilshire", ...}
+
+
+REQUEST: /type
+
+RESPONSE: a JSON list, each of which represents one type of crimes.
+
+EXAMPLE: /type
+{0: "VEHICLE - STOLEN", 1: "BURGLARY FROM VEHICLE", ...}
 
 REQUEST: /crimes
 
@@ -16,24 +30,23 @@ GET parameters
 
 	end_date (Optional, default: infinity) – return only crimes before the end date
 
-	area (Optional, default: all) – return only locations that are chosen
+	area (Optional, default: all) – return only areas that are chosen from areas api
 
-	type (Optional, default: all) – return only crime types that are chosen
+	type (Optional, default: all) – return only crime types that are chosen from types api
 
 RESPONSE: 
 A JSON list of dictionaries, one for each case, reported by the order in the dataset. Each dictionary in this list will have the following fields.
-
-	start_date – (TEXT) the start date of the cases
-	end_date – (TEXT) the end date of the cases
-	area – (TEXT) the area of the cases 
+	start_date – (TEXT) the start month of the cases, in format of "yyyy-mm"
+	end_date – (TEXT) the end month of the cases, in format of "yyyy-mm"
+	area – (TEXT) the districts of the cases 
 	type – (TEXT) the type of crimes
 
 EXAMPLE:
-/crimes?start_date=2023-03-12&end_date=2023-03-13&area=Central Park
+/crimes?start_date=2023-03&end_date=2023-04&area=Central Park
 [
 	{
-		“date”: “2020-03-01”
-“area”: “Central Park”,
+		“date”: “2020-03”
+		“area”: “Central",
 		“type”: “Assault”,
 		“victim_age”: 46
 		“victim_sex”: M
@@ -46,7 +59,7 @@ EXAMPLE:
 [
 	{
 		“date”: “2020-03-01”
-“area”: “Central Park”,
+		“area”: “Central”,
 		“type”: “Assault”,
 		“victim_age”: 46
 		“victim_sex”: M
@@ -59,8 +72,8 @@ EXAMPLE:
 [
 	{
 		“date”: “2020-03-01”
-“area”: “Central Park”,
-“type”: “Assault”,
+		“area”: “Central”,
+		“type”: “Assault”,
 		“victim_age”: 46
 		“victim_sex”: M
 		“location”: “Street”
