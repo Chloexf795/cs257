@@ -1,0 +1,69 @@
+REQUEST: /rawcsv
+
+RESPONSE: 
+text/csv
+Provides the full crime dataset as a CSV file. 
+
+EXAMPLE: 
+/rawcsv
+Triggers download of crime_data.csv
+
+
+REQUEST: /crimes
+
+GET parameters
+	start_date (Optional, default: -infinity) – return only crimes after the start date
+
+	end_date (Optional, default: infinity) – return only crimes before the end date
+
+	area (Optional, default: all) – return only locations that are chosen
+
+	type (Optional, default: all) – return only crime types that are chosen
+
+RESPONSE: 
+A JSON list of dictionaries, one for each case, reported by the order in the dataset. Each dictionary in this list will have the following fields.
+
+	start_date – (TEXT) the start date of the cases
+	end_date – (TEXT) the end date of the cases
+	area – (TEXT) the area of the cases 
+	type – (TEXT) the type of crimes
+
+EXAMPLE:
+/crimes?start_date=2023-03-12&end_date=2023-03-13&area=Central Park
+[
+	{
+		“date”: “2020-03-01”
+“area”: “Central Park”,
+		“type”: “Assault”,
+		“victim_age”: 46
+		“victim_sex”: M
+		“location”: “Street”
+	}
+]
+
+EXAMPLE:
+/crimes?central_park
+[
+	{
+		“date”: “2020-03-01”
+“area”: “Central Park”,
+		“type”: “Assault”,
+		“victim_age”: 46
+		“victim_sex”: M
+		“location”: “Street”
+	}
+]
+
+EXAMPLE:
+/crimes?assault
+[
+	{
+		“date”: “2020-03-01”
+“area”: “Central Park”,
+“type”: “Assault”,
+		“victim_age”: 46
+		“victim_sex”: M
+		“location”: “Street”
+	}
+]
+
