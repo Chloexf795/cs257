@@ -1,3 +1,4 @@
+'''
 CREATE TABLE crimes (
     id SERIAL PRIMARY KEY,
     crime_type_id INTEGER REFERENCES crime_types(id),
@@ -7,6 +8,14 @@ CREATE TABLE crimes (
     vict_sex TEXT,
     location_id INTEGER REFERENCES locations(id)
 );
+'''
+CREATE TABLE crimes (
+    id SERIAL PRIMARY KEY,
+    vict_age INTEGER,
+    vict_sex TEXT,
+    premis_desc TEXT
+);
+
 
 
 CREATE TABLE crime_types (
@@ -33,6 +42,3 @@ CREATE TABLE crimes_crime_types_crimes_times_locations (
     crime_time_id integer,
     location_id integer
 );
-
-
-

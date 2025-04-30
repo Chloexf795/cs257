@@ -15,5 +15,5 @@ AND dates = '02/21/2025'
 AND crimes.id = crimes_crime_types_crimes_times_locations.crime_id
 AND crime_types.id = crimes_crime_types_crimes_times_locations.crime_type_id
 AND locations.id = crimes_crime_types_crimes_times_locations.location_id
-AND crime_id = crimes_crime_types_crimes_times_locations.crime_time_id;
+AND crime_times.id = crimes_crime_types_crimes_times_locations.crime_time_id;
 
