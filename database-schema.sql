@@ -20,9 +20,7 @@ CREATE TABLE crime_times (
 
 CREATE TABLE locations (
     id SERIAL PRIMARY KEY,
-    location TEXT,
-    lat FLOAT,
-    lon FLOAT
+    location TEXT
 );
 
 CREATE TABLE crimes_crime_types_crimes_times_locations (
