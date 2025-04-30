@@ -101,8 +101,8 @@ def main():
     with open('data/crimes.csv', 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
         writer.writerow(['id', 'vict_age', 'vict_sex', 'premis_desc'])
-        for (crime, id) in crimes.items():
-            writer.writerow([id, crime])
+        for (vict_age, vict_sex, premis_desc), id in crimes.items():
+            writer.writerow([id, vict_age, vict_sex, premis_desc])
 
     with open('data/crimes_crime_types_crimes_times_locations.csv', 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)

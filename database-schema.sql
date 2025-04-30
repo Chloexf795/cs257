@@ -1,14 +1,3 @@
-'''
-CREATE TABLE crimes (
-    id SERIAL PRIMARY KEY,
-    crime_type_id INTEGER REFERENCES crime_types(id),
-    time_id INTEGER REFERENCES crime_times(id),
-    area_name TEXT,
-    vict_age INTEGER,
-    vict_sex TEXT,
-    location_id INTEGER REFERENCES locations(id)
-);
-'''
 CREATE TABLE crimes (
     id SERIAL PRIMARY KEY,
     vict_age INTEGER,
@@ -19,7 +8,7 @@ CREATE TABLE crimes (
 
 
 CREATE TABLE crime_types (
-    id SERIAL PRIMARY KEY,
+    id integer NOT NULL,
     crm_cd_desc TEXT
 );
 
@@ -42,3 +31,5 @@ CREATE TABLE crimes_crime_types_crimes_times_locations (
     crime_time_id integer,
     location_id integer
 );
+
+\copy authors FROM 'authors.csv' DELIMITER ',' CSV NULL AS 'NULL'
