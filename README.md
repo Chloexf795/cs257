@@ -12,12 +12,15 @@ time_occ: Time of occurrence (in 24-hour HHMM format)
 
 # locations
 id: Unique ID for the location
-location: Street-level address or block of incident
+location: the district of the indicent
+(followed will may be added later:
+street: street-level address or block of incident 
 lat: Latitude coordinate
 lon: Longitude coordinate
+)
 
 # crimes
 id: Unique ID for the crime
 vict_age: The age of the victim
 vict_sex: The sex of the victim
-Premis Desc: Premise description, basically the type of location where the crime happened 
+premis_desc: Premise description, basically the type of location where the crime happened 
