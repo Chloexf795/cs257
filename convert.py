@@ -78,19 +78,16 @@ def main():
     # Write files
     with open('data/crime_types.csv', 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
-        writer.writerow(['id', 'crm_cd_desc'])
         for desc, id in crime_types.items():
             writer.writerow([id, desc])
 
     with open('data/crime_times.csv', 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
-        writer.writerow(['id', 'date_occ', 'time_occ'])
         for (date, time), id in crime_times.items():
             writer.writerow([id, date, time])
 
     with open('data/locations.csv', 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
-        writer.writerow(['id', 'location'])
         '''
         for (loc, lat, lon), id in locations.items():
             writer.writerow([id, loc, lat, lon])
@@ -100,13 +97,11 @@ def main():
 
     with open('data/crimes.csv', 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
-        writer.writerow(['id', 'vict_age', 'vict_sex', 'premis_desc'])
         for (vict_age, vict_sex, premis_desc), id in crimes.items():
             writer.writerow([id, vict_age, vict_sex, premis_desc])
 
     with open('data/crimes_crime_types_crimes_times_locations.csv', 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
-        writer.writerow(['crime_id', 'crime_type_id', 'crime_time_id', 'location_id'])
         for ids in crimes_crime_types_crimes_times_locations:
             writer.writerow(ids)
 
