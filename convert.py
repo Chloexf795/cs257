@@ -53,10 +53,12 @@ def main():
 
             # Handle crime_times
             time_key = (date_occ, time_occ)
-            if time_key not in crime_times:
-                crime_times[time_key] = time_id
+            dt = datetime.strptime(time_key[0], "%m/%d/%Y %I:%M:%S %p")
+            year_month = dt.strftime("%Y-%m")
+            if year_month not in crime_times:
+                crime_times[year_month] = time_id
                 time_id += 1
-            t_id = crime_times[time_key]
+            t_id = crime_times[year_month]
 
             # Handle locations
             #loc_key = (location, lat, lon)
@@ -83,8 +85,8 @@ def main():
 
     with open('data/crime_times.csv', 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
-        for (date, time), id in crime_times.items():
-            writer.writerow([id, date, time])
+        for (year_month), id in crime_times.items():
+            writer.writerow([id, year_month])
 
     with open('data/locations.csv', 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
