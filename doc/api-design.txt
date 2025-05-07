@@ -45,7 +45,7 @@ EXAMPLE:
 /crimes?start_date=2023-03&end_date=2023-04&area=Central Park
 [
 	{
-		“date”: “2020-03”
+		“date”: “2023-03”
 		“area”: “Central",
 		“type”: “Assault”,
 		“victim_age”: 46
@@ -58,7 +58,7 @@ EXAMPLE:
 /crimes?central_park
 [
 	{
-		“date”: “2020-03-01”
+		“date”: “2020-03”
 		“area”: “Central”,
 		“type”: “Assault”,
 		“victim_age”: 46
@@ -71,7 +71,7 @@ EXAMPLE:
 /crimes?assault
 [
 	{
-		“date”: “2020-03-01”
+		“date”: “2020-03”
 		“area”: “Central”,
 		“type”: “Assault”,
 		“victim_age”: 46
