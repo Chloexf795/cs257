@@ -16,65 +16,36 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
+ALTER TABLE ONLY public.locations DROP CONSTRAINT locations_pkey;
+ALTER TABLE ONLY public.crimes DROP CONSTRAINT crimes_pkey;
+ALTER TABLE ONLY public.crime_times DROP CONSTRAINT crime_times_pkey;
+ALTER TABLE public.locations ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.crimes ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.crime_times ALTER COLUMN id DROP DEFAULT;
+DROP SEQUENCE public.locations_id_seq;
+DROP TABLE public.locations;
+DROP SEQUENCE public.crimes_id_seq;
+DROP TABLE public.crimes_crime_types_crimes_times_locations;
+DROP TABLE public.crimes;
+DROP TABLE public.crime_types;
+DROP SEQUENCE public.crime_times_id_seq;
+DROP TABLE public.crime_times;
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
 --
--- Name: authors; Type: TABLE; Schema: public; Owner: xuo
---
-
-CREATE TABLE public.authors (
-    id integer NOT NULL,
-    surname text,
-    given_name text,
-    birth_year integer,
-    death_year integer
-);
-
-
-ALTER TABLE public.authors OWNER TO xuo;
-
---
--- Name: books; Type: TABLE; Schema: public; Owner: xuo
---
-
-CREATE TABLE public.books (
-    id integer NOT NULL,
-    title text,
-    publication_year integer
-);
-
-
-ALTER TABLE public.books OWNER TO xuo;
-
---
--- Name: books_authors; Type: TABLE; Schema: public; Owner: xuo
---
-
-CREATE TABLE public.books_authors (
-    book_id integer,
-    author_id integer
-);
-
-
-ALTER TABLE public.books_authors OWNER TO xuo;
-
---
--- Name: crime_times; Type: TABLE; Schema: public; Owner: xuo
+-- Name: crime_times; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.crime_times (
     id integer NOT NULL,
-    date_occ timestamp without time zone,
-    time_occ integer
+    date_occ text
 );
 
 
-ALTER TABLE public.crime_times OWNER TO xuo;
-
 --
--- Name: crime_times_id_seq; Type: SEQUENCE; Schema: public; Owner: xuo
+-- Name: crime_times_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.crime_times_id_seq
@@ -86,17 +57,15 @@ CREATE SEQUENCE public.crime_times_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.crime_times_id_seq OWNER TO xuo;
-
 --
--- Name: crime_times_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: xuo
+-- Name: crime_times_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.crime_times_id_seq OWNED BY public.crime_times.id;
 
 
 --
--- Name: crime_types; Type: TABLE; Schema: public; Owner: xuo
+-- Name: crime_types; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.crime_types (
@@ -105,10 +74,8 @@ CREATE TABLE public.crime_types (
 );
 
 
-ALTER TABLE public.crime_types OWNER TO xuo;
-
 --
--- Name: crimes; Type: TABLE; Schema: public; Owner: xuo
+-- Name: crimes; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.crimes (
@@ -119,10 +86,8 @@ CREATE TABLE public.crimes (
 );
 
 
-ALTER TABLE public.crimes OWNER TO xuo;
-
 --
--- Name: crimes_crime_types_crimes_times_locations; Type: TABLE; Schema: public; Owner: xuo
+-- Name: crimes_crime_types_crimes_times_locations; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.crimes_crime_types_crimes_times_locations (
@@ -133,10 +98,8 @@ CREATE TABLE public.crimes_crime_types_crimes_times_locations (
 );
 
 
-ALTER TABLE public.crimes_crime_types_crimes_times_locations OWNER TO xuo;
-
 --
--- Name: crimes_id_seq; Type: SEQUENCE; Schema: public; Owner: xuo
+-- Name: crimes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.crimes_id_seq
@@ -148,17 +111,15 @@ CREATE SEQUENCE public.crimes_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.crimes_id_seq OWNER TO xuo;
-
 --
--- Name: crimes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: xuo
+-- Name: crimes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.crimes_id_seq OWNED BY public.crimes.id;
 
 
 --
--- Name: locations; Type: TABLE; Schema: public; Owner: xuo
+-- Name: locations; Type: TABLE; Schema: public; Owner: -
 --
 
 CREATE TABLE public.locations (
@@ -167,10 +128,8 @@ CREATE TABLE public.locations (
 );
 
 
-ALTER TABLE public.locations OWNER TO xuo;
-
 --
--- Name: locations_id_seq; Type: SEQUENCE; Schema: public; Owner: xuo
+-- Name: locations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
 CREATE SEQUENCE public.locations_id_seq
@@ -182,410 +141,47 @@ CREATE SEQUENCE public.locations_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.locations_id_seq OWNER TO xuo;
-
 --
--- Name: locations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: xuo
+-- Name: locations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
 ALTER SEQUENCE public.locations_id_seq OWNED BY public.locations.id;
 
 
 --
--- Name: crime_times id; Type: DEFAULT; Schema: public; Owner: xuo
+-- Name: crime_times id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.crime_times ALTER COLUMN id SET DEFAULT nextval('public.crime_times_id_seq'::regclass);
 
 
 --
--- Name: crimes id; Type: DEFAULT; Schema: public; Owner: xuo
+-- Name: crimes id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.crimes ALTER COLUMN id SET DEFAULT nextval('public.crimes_id_seq'::regclass);
 
 
 --
--- Name: locations id; Type: DEFAULT; Schema: public; Owner: xuo
+-- Name: locations id; Type: DEFAULT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.locations ALTER COLUMN id SET DEFAULT nextval('public.locations_id_seq'::regclass);
 
 
 --
--- Data for Name: authors; Type: TABLE DATA; Schema: public; Owner: xuo
+-- Data for Name: crime_times; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public.authors (id, surname, given_name, birth_year, death_year) FROM stdin;
-0	Willis	Connie	1945	\N
-1	Christie	Agatha	1890	1976
-2	Morrison	Toni	1931	\N
-3	Conger	Kate	1989	\N
-4	Mac	Ryan	\N	\N
-5	Lewis	Sinclair	1885	1951
-6	Austen	Jane	1775	1817
-7	Brontë	Charlotte	1816	1855
-8	Wodehouse	P.G.	1881	1975
-9	Márquez	Gabriel García	1927	2014
-10	Kritzer	Naomi	1973	\N
-11	Bujold	Lois McMaster	1949	\N
-12	Melville	Herman	1819	1891
-13	Sterne	Laurence	1713	1768
-14	Osman	Richard	1970	\N
-15	Brontë	Ann	1820	1849
-16	Brontë	Emily	1818	1848
+COPY public.crime_times (id, date_occ) FROM stdin;
+0	2025-01
+1	2025-02
+2	2025-03
 \.
 
 
 --
--- Data for Name: books; Type: TABLE DATA; Schema: public; Owner: xuo
---
-
-COPY public.books (id, title, publication_year) FROM stdin;
-0	All Clear	2010
-1	And Then There Were None	1939
-2	Beloved	1987
-3	Blackout	2010
-4	Character Limit	2024
-5	Elmer Gantry	1927
-6	Emma	1815
-7	Jane Eyre	1847
-8	Leave it to Psmith	1923
-9	Love in the Time of Cholera	1985
-10	Catfishing on Catnet	2019
-11	Main Street	1920
-12	Mirror Dance	1994
-13	Moby Dick	1851
-14	Murder on the Orient Express	1934
-15	Omoo	1847
-16	One Hundred Years of Solitude	1967
-17	Pride and Prejudice	1813
-18	Right Ho, Jeeves	1934
-19	Liberty's Daughter	2023
-20	Sense and Sensibility	1813
-21	Shards of Honor	1986
-22	Sula	1973
-23	The Code of the Woosters	1938
-24	The Life and Opinions of Tristram Shandy, Gentleman	1759
-25	The Thursday Murder Club	2020
-26	The Tenant of Wildfell Hall	1848
-27	To Say Nothing of the Dog	1997
-28	Villette	1853
-29	The Man Who Died Twice	2021
-30	Wuthering Heights	1847
-\.
-
-
---
--- Data for Name: books_authors; Type: TABLE DATA; Schema: public; Owner: xuo
---
-
-COPY public.books_authors (book_id, author_id) FROM stdin;
-0	0
-1	1
-2	2
-0	3
-3	4
-4	4
-5	5
-6	6
-7	7
-8	8
-9	9
-10	10
-5	11
-11	12
-12	13
-1	14
-12	15
-9	16
-6	17
-8	18
-10	19
-6	20
-11	21
-2	22
-8	23
-13	24
-14	25
-15	26
-0	27
-7	28
-14	29
-16	30
-\.
-
-
---
--- Data for Name: crime_times; Type: TABLE DATA; Schema: public; Owner: xuo
---
-
-COPY public.crime_times (id, date_occ, time_occ) FROM stdin;
-0	2025-01-14 00:00:00	1457
-1	2025-02-25 00:00:00	1445
-2	2025-03-27 00:00:00	1200
-3	2025-03-06 00:00:00	1400
-4	2025-02-05 00:00:00	1430
-5	2025-02-18 00:00:00	1550
-6	2025-02-08 00:00:00	1900
-7	2025-02-06 00:00:00	2100
-8	2025-01-18 00:00:00	1323
-9	2025-01-23 00:00:00	2054
-10	2025-03-02 00:00:00	1750
-11	2025-01-24 00:00:00	1343
-12	2025-02-28 00:00:00	1315
-13	2025-01-20 00:00:00	1347
-14	2025-01-20 00:00:00	1230
-15	2025-01-31 00:00:00	910
-16	2025-02-25 00:00:00	1900
-17	2025-03-05 00:00:00	800
-18	2025-01-30 00:00:00	1927
-19	2025-02-19 00:00:00	1730
-20	2025-02-06 00:00:00	1547
-21	2025-02-26 00:00:00	700
-22	2025-01-16 00:00:00	730
-23	2025-01-30 00:00:00	2306
-24	2025-03-04 00:00:00	1930
-25	2025-03-21 00:00:00	1550
-26	2025-01-01 00:00:00	1550
-27	2025-02-05 00:00:00	1930
-28	2025-02-14 00:00:00	1200
-29	2025-02-18 00:00:00	1400
-30	2025-01-18 00:00:00	1100
-31	2025-02-14 00:00:00	504
-32	2025-03-01 00:00:00	1200
-33	2025-02-24 00:00:00	2230
-34	2025-02-06 00:00:00	1002
-35	2025-01-27 00:00:00	1800
-36	2025-02-10 00:00:00	1539
-37	2025-03-06 00:00:00	1330
-38	2025-03-12 00:00:00	1300
-39	2025-01-23 00:00:00	1012
-40	2025-01-14 00:00:00	15
-41	2025-01-27 00:00:00	2034
-42	2025-02-24 00:00:00	1413
-43	2025-02-03 00:00:00	1650
-44	2025-01-15 00:00:00	2316
-45	2025-02-14 00:00:00	1500
-46	2025-02-08 00:00:00	1430
-47	2025-02-26 00:00:00	827
-48	2025-03-06 00:00:00	2026
-49	2025-02-24 00:00:00	1130
-50	2025-03-27 00:00:00	837
-51	2025-01-22 00:00:00	1517
-52	2025-02-21 00:00:00	1530
-53	2025-02-06 00:00:00	30
-54	2025-02-15 00:00:00	1700
-55	2025-03-08 00:00:00	1250
-56	2025-02-21 00:00:00	1600
-57	2025-02-07 00:00:00	1200
-58	2025-02-04 00:00:00	2000
-59	2025-01-21 00:00:00	1200
-60	2025-01-29 00:00:00	900
-61	2025-01-21 00:00:00	1900
-62	2025-01-30 00:00:00	1100
-63	2025-03-12 00:00:00	800
-64	2025-03-05 00:00:00	2130
-65	2025-03-16 00:00:00	1255
-66	2025-01-26 00:00:00	1423
-67	2025-02-06 00:00:00	940
-68	2025-01-23 00:00:00	227
-69	2025-02-19 00:00:00	1555
-70	2025-01-13 00:00:00	1430
-71	2025-03-17 00:00:00	351
-72	2025-02-06 00:00:00	1415
-73	2025-02-26 00:00:00	915
-74	2025-03-21 00:00:00	2230
-75	2025-02-10 00:00:00	1235
-76	2025-01-15 00:00:00	2345
-77	2025-02-27 00:00:00	1800
-78	2025-02-14 00:00:00	2230
-79	2025-03-12 00:00:00	1242
-80	2025-02-07 00:00:00	20
-81	2025-03-06 00:00:00	1700
-82	2025-03-06 00:00:00	1200
-83	2025-01-23 00:00:00	35
-84	2025-02-23 00:00:00	1900
-85	2025-02-10 00:00:00	1100
-86	2025-01-01 00:00:00	2135
-87	2025-02-20 00:00:00	1450
-88	2025-02-06 00:00:00	2130
-89	2025-02-17 00:00:00	1345
-90	2025-02-02 00:00:00	2040
-91	2025-02-21 00:00:00	1330
-92	2025-02-14 00:00:00	800
-93	2025-02-09 00:00:00	1200
-94	2025-01-23 00:00:00	1249
-95	2025-02-05 00:00:00	1755
-96	2025-01-24 00:00:00	1600
-97	2025-01-16 00:00:00	1200
-98	2025-01-22 00:00:00	251
-99	2025-02-26 00:00:00	928
-100	2025-01-21 00:00:00	128
-101	2025-01-24 00:00:00	1400
-102	2025-02-05 00:00:00	1900
-103	2025-02-10 00:00:00	1415
-104	2025-03-19 00:00:00	850
-105	2025-01-24 00:00:00	1500
-106	2025-01-27 00:00:00	1830
-107	2025-01-14 00:00:00	1955
-108	2025-01-28 00:00:00	1700
-109	2025-01-15 00:00:00	2242
-110	2025-02-17 00:00:00	1800
-111	2025-02-07 00:00:00	1700
-112	2025-01-29 00:00:00	2122
-113	2025-03-11 00:00:00	2100
-114	2025-02-22 00:00:00	1200
-115	2025-02-26 00:00:00	430
-116	2025-02-04 00:00:00	1645
-117	2025-01-24 00:00:00	1020
-118	2025-02-04 00:00:00	2140
-119	2025-03-18 00:00:00	2100
-120	2025-03-14 00:00:00	1800
-121	2025-03-26 00:00:00	1645
-122	2025-02-03 00:00:00	2230
-123	2025-01-31 00:00:00	925
-124	2025-02-28 00:00:00	1900
-125	2025-03-12 00:00:00	1314
-126	2025-02-11 00:00:00	2230
-127	2025-01-04 00:00:00	1200
-128	2025-01-02 00:00:00	800
-129	2025-02-12 00:00:00	1430
-130	2025-02-07 00:00:00	900
-131	2025-01-17 00:00:00	38
-132	2025-02-01 00:00:00	1600
-133	2025-02-11 00:00:00	940
-134	2025-01-31 00:00:00	1430
-135	2025-02-25 00:00:00	940
-136	2025-02-14 00:00:00	1530
-137	2025-01-27 00:00:00	1600
-138	2025-02-17 00:00:00	2100
-139	2025-01-21 00:00:00	500
-140	2025-01-02 00:00:00	2230
-141	2025-01-27 00:00:00	1900
-142	2025-02-18 00:00:00	1900
-143	2025-03-16 00:00:00	1730
-144	2025-02-02 00:00:00	1315
-145	2025-03-05 00:00:00	1615
-146	2025-02-20 00:00:00	115
-147	2025-03-17 00:00:00	1300
-148	2025-03-15 00:00:00	1200
-149	2025-03-26 00:00:00	633
-150	2025-03-14 00:00:00	1000
-151	2025-02-12 00:00:00	340
-152	2025-03-12 00:00:00	1307
-153	2025-03-17 00:00:00	1745
-154	2025-01-30 00:00:00	1620
-155	2025-02-06 00:00:00	200
-156	2025-01-07 00:00:00	1025
-157	2025-01-15 00:00:00	1713
-158	2025-02-06 00:00:00	1540
-159	2025-01-31 00:00:00	1730
-160	2025-03-24 00:00:00	1345
-161	2025-02-08 00:00:00	1849
-162	2025-01-13 00:00:00	2205
-163	2025-02-13 00:00:00	1030
-164	2025-01-01 00:00:00	1600
-165	2025-01-02 00:00:00	1020
-166	2025-03-12 00:00:00	1510
-167	2025-03-12 00:00:00	1545
-168	2025-02-23 00:00:00	1530
-169	2025-03-17 00:00:00	1330
-170	2025-02-25 00:00:00	2315
-171	2025-03-27 00:00:00	1250
-172	2025-02-09 00:00:00	1345
-173	2025-01-27 00:00:00	1300
-174	2025-01-22 00:00:00	1330
-175	2025-01-31 00:00:00	1000
-176	2025-01-22 00:00:00	1850
-177	2025-03-12 00:00:00	1415
-178	2025-01-24 00:00:00	2230
-179	2025-02-03 00:00:00	900
-180	2025-02-21 00:00:00	940
-181	2025-02-06 00:00:00	1559
-182	2025-01-21 00:00:00	816
-183	2025-01-10 00:00:00	1213
-184	2025-03-09 00:00:00	30
-185	2025-02-21 00:00:00	700
-186	2025-03-09 00:00:00	505
-187	2025-01-24 00:00:00	1420
-188	2025-03-13 00:00:00	1757
-189	2025-01-16 00:00:00	2358
-190	2025-01-08 00:00:00	700
-191	2025-01-16 00:00:00	2225
-192	2025-02-11 00:00:00	1100
-193	2025-02-22 00:00:00	1650
-194	2025-02-07 00:00:00	1311
-195	2025-01-26 00:00:00	1600
-196	2025-02-11 00:00:00	2130
-197	2025-03-12 00:00:00	1540
-198	2025-02-01 00:00:00	1406
-199	2025-02-05 00:00:00	800
-200	2025-03-17 00:00:00	1430
-201	2025-02-21 00:00:00	2230
-202	2025-01-26 00:00:00	1
-203	2025-03-20 00:00:00	2055
-204	2025-03-17 00:00:00	1915
-205	2025-01-28 00:00:00	1000
-206	2025-02-07 00:00:00	2115
-207	2025-01-02 00:00:00	957
-208	2025-01-21 00:00:00	123
-209	2025-02-07 00:00:00	1640
-210	2025-03-25 00:00:00	1430
-211	2025-03-20 00:00:00	900
-212	2025-01-29 00:00:00	830
-213	2025-03-11 00:00:00	912
-214	2025-02-26 00:00:00	1700
-215	2025-01-15 00:00:00	750
-216	2025-01-26 00:00:00	1830
-217	2025-03-18 00:00:00	2230
-218	2025-01-16 00:00:00	1500
-219	2025-01-14 00:00:00	1600
-220	2025-03-03 00:00:00	845
-221	2025-02-05 00:00:00	1130
-222	2025-01-31 00:00:00	1800
-223	2025-02-05 00:00:00	2240
-224	2025-02-20 00:00:00	1530
-225	2025-01-26 00:00:00	125
-226	2025-02-20 00:00:00	2030
-227	2025-01-03 00:00:00	1500
-228	2025-02-19 00:00:00	1800
-229	2025-01-31 00:00:00	1621
-230	2025-01-02 00:00:00	2257
-231	2025-01-22 00:00:00	308
-232	2025-02-05 00:00:00	1555
-233	2025-02-27 00:00:00	1210
-234	2025-02-14 00:00:00	1700
-235	2025-02-27 00:00:00	1244
-236	2025-02-06 00:00:00	1400
-237	2025-01-30 00:00:00	1930
-238	2025-02-05 00:00:00	1700
-239	2025-01-19 00:00:00	1719
-240	2025-03-13 00:00:00	1325
-241	2025-02-19 00:00:00	535
-242	2025-02-11 00:00:00	730
-243	2025-01-26 00:00:00	630
-244	2025-02-02 00:00:00	130
-245	2025-02-18 00:00:00	1000
-246	2025-01-16 00:00:00	221
-247	2025-02-14 00:00:00	2310
-248	2025-02-19 00:00:00	1100
-249	2025-02-06 00:00:00	2215
-250	2025-01-30 00:00:00	1554
-251	2025-01-02 00:00:00	1832
-252	2025-01-24 00:00:00	1240
-253	2025-01-17 00:00:00	1600
-254	2025-03-20 00:00:00	1500
-255	2025-01-17 00:00:00	1530
-256	2025-02-13 00:00:00	2100
-257	2025-01-14 00:00:00	1250
-258	2025-02-27 00:00:00	1550
-259	2025-03-25 00:00:00	1235
-\.
-
-
---
--- Data for Name: crime_types; Type: TABLE DATA; Schema: public; Owner: xuo
+-- Data for Name: crime_types; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.crime_types (id, crm_cd_desc) FROM stdin;
@@ -626,7 +222,7 @@ COPY public.crime_types (id, crm_cd_desc) FROM stdin;
 
 
 --
--- Data for Name: crimes; Type: TABLE DATA; Schema: public; Owner: xuo
+-- Data for Name: crimes; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.crimes (id, vict_age, vict_sex, premis_desc) FROM stdin;
@@ -731,309 +327,309 @@ COPY public.crimes (id, vict_age, vict_sex, premis_desc) FROM stdin;
 
 
 --
--- Data for Name: crimes_crime_types_crimes_times_locations; Type: TABLE DATA; Schema: public; Owner: xuo
+-- Data for Name: crimes_crime_types_crimes_times_locations; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.crimes_crime_types_crimes_times_locations (crime_id, crime_type_id, crime_time_id, location_id) FROM stdin;
 0	0	0	0
 1	1	1	1
 2	2	2	2
-2	3	3	2
-2	4	4	2
-3	5	5	3
-2	6	6	4
-4	7	7	5
-2	6	8	4
-5	2	9	2
-6	1	10	6
-7	8	11	7
-8	0	12	8
-9	4	13	2
-2	2	14	4
-10	9	15	9
-2	2	16	4
-5	2	17	10
-5	2	18	2
-2	3	19	10
-11	5	20	3
-12	1	21	2
-2	6	22	4
-13	10	23	3
-2	6	24	4
-14	5	25	11
-15	2	26	12
-2	4	27	2
-2	6	28	4
-2	6	29	4
-16	11	30	7
-2	4	27	2
-17	8	31	1
-2	2	32	2
-18	12	33	5
-19	9	34	13
+2	3	2	2
+2	4	1	2
+3	5	1	3
+2	6	1	4
+4	7	1	5
+2	6	0	4
+5	2	0	2
+6	1	2	6
+7	8	0	7
+8	0	1	8
+9	4	0	2
+2	2	0	4
+10	9	0	9
+2	2	1	4
+5	2	2	10
+5	2	0	2
+2	3	1	10
+11	5	1	3
+12	1	1	2
+2	6	0	4
+13	10	0	3
+2	6	2	4
+14	5	2	11
+15	2	0	12
+2	4	1	2
+2	6	1	4
+2	6	1	4
+16	11	0	7
+2	4	1	2
+17	8	1	1
 2	2	2	2
-2	6	35	4
-20	0	36	7
-2	3	37	11
-21	13	38	1
-2	2	39	4
-15	2	40	12
-2	3	37	11
-2	4	41	2
-22	14	42	8
-23	15	43	1
-24	4	44	2
-25	13	45	9
-26	4	46	10
-26	13	47	13
-2	2	48	4
-27	0	49	5
-28	16	50	2
-29	17	51	3
-30	0	52	14
-2	4	53	2
-31	2	54	2
-26	10	55	8
-2	2	56	4
-32	18	57	2
-2	6	58	4
-2	2	59	2
-33	11	54	2
-34	5	60	7
-2	6	61	4
-35	15	62	1
-2	2	63	4
-18	8	64	5
-6	19	65	6
-18	11	66	10
-36	13	67	2
-9	4	68	2
-20	7	69	7
-37	9	70	2
-38	11	71	8
-2	4	53	2
-39	20	72	6
-2	2	73	10
-40	4	74	7
-37	0	75	15
-9	4	76	2
-15	2	77	4
-41	4	78	7
-42	4	79	7
-2	4	80	2
-2	6	81	4
-16	8	82	7
-43	4	27	4
-9	4	83	2
-24	21	84	0
-17	19	85	14
-2	4	27	2
-44	22	86	1
-45	2	87	4
-16	4	88	8
-2	2	32	4
-17	19	89	1
-46	23	90	1
-47	0	91	2
-48	2	92	4
-6	19	93	6
-2	2	94	4
-2	2	95	4
-49	21	96	16
-5	2	97	9
-9	4	98	2
-0	0	99	8
-2	4	100	2
-50	0	101	2
-2	4	102	4
-51	24	103	7
-16	8	104	13
-52	8	105	7
-2	6	106	4
-2	4	107	2
-48	2	108	4
-2	4	109	2
-2	6	110	4
-16	11	111	8
-2	4	112	2
-24	1	113	0
-53	2	114	4
-54	15	115	14
-2	4	53	2
-2	6	116	4
-55	0	117	10
-2	2	118	12
-2	6	119	4
-40	4	120	6
-5	2	121	4
-18	12	122	5
-56	4	123	4
-57	2	124	4
-58	13	125	0
-59	10	126	6
-5	4	127	2
-60	13	125	0
-6	25	128	6
-61	20	129	7
-19	9	130	10
-9	4	131	2
-2	6	132	4
-62	7	133	7
-16	4	134	8
-2	2	135	2
-2	3	136	3
-2	6	137	4
-63	9	138	7
-2	2	139	9
-5	2	140	2
-64	2	141	4
-2	6	142	4
-2	6	143	2
-65	26	144	1
-11	27	145	8
-2	4	146	2
-2	4	147	2
-65	0	148	10
-2	4	4	2
-66	13	149	0
-67	9	150	6
-68	1	151	16
-16	4	134	8
-2	4	53	2
-69	0	152	7
-70	5	153	12
-47	28	154	2
-2	2	155	4
-19	0	156	15
-2	4	157	2
-12	1	158	5
-2	6	159	4
-27	5	160	9
-2	6	161	4
-9	4	162	2
-71	0	163	8
-12	1	164	9
-72	12	165	14
-63	27	145	8
-2	2	166	2
-69	0	167	6
-6	20	168	6
-4	29	169	7
-2	2	170	4
-2	2	171	4
-17	0	172	1
-73	13	173	17
-18	13	174	13
-74	0	175	13
-2	2	176	4
-75	13	177	10
-2	6	178	4
-5	6	179	12
-76	0	180	8
-77	4	178	7
-21	0	12	8
-78	7	181	18
-18	4	182	13
-2	4	183	2
-79	1	184	0
-2	2	81	4
-2	2	185	4
-2	2	29	4
-2	6	186	4
-2	4	4	2
-76	9	187	18
-2	4	27	2
-5	2	188	2
-2	4	189	2
-2	4	190	2
-2	4	191	2
-26	23	192	5
-1	1	193	19
-80	10	194	14
-2	6	195	4
-2	6	196	4
-5	2	137	4
-69	0	197	6
-2	6	198	4
-2	2	199	4
-21	4	200	3
-81	4	201	7
-5	2	202	12
-2	6	203	4
-2	2	204	4
-69	0	205	8
-43	2	206	4
-82	0	207	1
-9	4	208	2
-2	6	6	4
-2	2	209	4
-83	5	210	10
-11	5	211	10
-19	9	212	1
-84	0	213	5
-11	13	197	8
-2	2	214	4
-85	17	215	8
-2	2	115	14
-5	6	216	4
-26	11	217	10
-18	23	218	5
-76	0	219	8
-27	30	220	7
-18	8	221	5
-24	10	222	3
-5	4	223	2
-76	9	224	7
-2	2	225	4
-53	6	226	4
-86	11	227	2
-2	2	166	2
-2	4	27	2
-5	6	228	4
-69	31	229	8
-9	4	230	2
-9	4	231	2
-2	4	53	2
-87	21	232	0
-88	0	233	8
-2	6	234	4
-5	2	235	2
-2	4	236	2
-5	2	237	4
-2	2	238	4
-61	20	129	7
-2	6	46	4
-2	6	239	4
-2	23	240	2
-2	6	241	4
-26	10	242	5
-2	2	243	12
-79	1	244	0
-89	21	245	10
-2	4	246	2
-26	11	247	5
-90	6	97	4
-91	2	248	4
-2	6	249	4
-92	17	250	3
-93	32	251	4
-2	4	53	2
-94	26	252	6
-19	0	253	8
-37	30	220	7
-64	2	28	4
-95	23	254	2
-38	4	255	0
-2	2	52	4
-5	6	256	4
-22	5	257	2
-2	2	258	14
-96	17	259	7
+18	12	1	5
+19	9	1	13
+2	2	2	2
+2	6	0	4
+20	0	1	7
+2	3	2	11
+21	13	2	1
+2	2	0	4
+15	2	0	12
+2	3	2	11
+2	4	0	2
+22	14	1	8
+23	15	1	1
+24	4	0	2
+25	13	1	9
+26	4	1	10
+26	13	1	13
+2	2	2	4
+27	0	1	5
+28	16	2	2
+29	17	0	3
+30	0	1	14
+2	4	1	2
+31	2	1	2
+26	10	2	8
+2	2	1	4
+32	18	1	2
+2	6	1	4
+2	2	0	2
+33	11	1	2
+34	5	0	7
+2	6	0	4
+35	15	0	1
+2	2	2	4
+18	8	2	5
+6	19	2	6
+18	11	0	10
+36	13	1	2
+9	4	0	2
+20	7	1	7
+37	9	0	2
+38	11	2	8
+2	4	1	2
+39	20	1	6
+2	2	1	10
+40	4	2	7
+37	0	1	15
+9	4	0	2
+15	2	1	4
+41	4	1	7
+42	4	2	7
+2	4	1	2
+2	6	2	4
+16	8	2	7
+43	4	1	4
+9	4	0	2
+24	21	1	0
+17	19	1	14
+2	4	1	2
+44	22	0	1
+45	2	1	4
+16	4	1	8
+2	2	2	4
+17	19	1	1
+46	23	1	1
+47	0	1	2
+48	2	1	4
+6	19	1	6
+2	2	0	4
+2	2	1	4
+49	21	0	16
+5	2	0	9
+9	4	0	2
+0	0	1	8
+2	4	0	2
+50	0	0	2
+2	4	1	4
+51	24	1	7
+16	8	2	13
+52	8	0	7
+2	6	0	4
+2	4	0	2
+48	2	0	4
+2	4	0	2
+2	6	1	4
+16	11	1	8
+2	4	0	2
+24	1	2	0
+53	2	1	4
+54	15	1	14
+2	4	1	2
+2	6	1	4
+55	0	0	10
+2	2	1	12
+2	6	2	4
+40	4	2	6
+5	2	2	4
+18	12	1	5
+56	4	0	4
+57	2	1	4
+58	13	2	0
+59	10	1	6
+5	4	0	2
+60	13	2	0
+6	25	0	6
+61	20	1	7
+19	9	1	10
+9	4	0	2
+2	6	1	4
+62	7	1	7
+16	4	0	8
+2	2	1	2
+2	3	1	3
+2	6	0	4
+63	9	1	7
+2	2	0	9
+5	2	0	2
+64	2	0	4
+2	6	1	4
+2	6	2	2
+65	26	1	1
+11	27	2	8
+2	4	1	2
+2	4	2	2
+65	0	2	10
+2	4	1	2
+66	13	2	0
+67	9	2	6
+68	1	1	16
+16	4	0	8
+2	4	1	2
+69	0	2	7
+70	5	2	12
+47	28	0	2
+2	2	1	4
+19	0	0	15
+2	4	0	2
+12	1	1	5
+2	6	0	4
+27	5	2	9
+2	6	1	4
+9	4	0	2
+71	0	1	8
+12	1	0	9
+72	12	0	14
+63	27	2	8
+2	2	2	2
+69	0	2	6
+6	20	1	6
+4	29	2	7
+2	2	1	4
+2	2	2	4
+17	0	1	1
+73	13	0	17
+18	13	0	13
+74	0	0	13
+2	2	0	4
+75	13	2	10
+2	6	0	4
+5	6	1	12
+76	0	1	8
+77	4	0	7
+21	0	1	8
+78	7	1	18
+18	4	0	13
+2	4	0	2
+79	1	2	0
+2	2	2	4
+2	2	1	4
+2	2	1	4
+2	6	2	4
+2	4	1	2
+76	9	0	18
+2	4	1	2
+5	2	2	2
+2	4	0	2
+2	4	0	2
+2	4	0	2
+26	23	1	5
+1	1	1	19
+80	10	1	14
+2	6	0	4
+2	6	1	4
+5	2	0	4
+69	0	2	6
+2	6	1	4
+2	2	1	4
+21	4	2	3
+81	4	1	7
+5	2	0	12
+2	6	2	4
+2	2	2	4
+69	0	0	8
+43	2	1	4
+82	0	0	1
+9	4	0	2
+2	6	1	4
+2	2	1	4
+83	5	2	10
+11	5	2	10
+19	9	0	1
+84	0	2	5
+11	13	2	8
+2	2	1	4
+85	17	0	8
+2	2	1	14
+5	6	0	4
+26	11	2	10
+18	23	0	5
+76	0	0	8
+27	30	2	7
+18	8	1	5
+24	10	0	3
+5	4	1	2
+76	9	1	7
+2	2	0	4
+53	6	1	4
+86	11	0	2
+2	2	2	2
+2	4	1	2
+5	6	1	4
+69	31	0	8
+9	4	0	2
+9	4	0	2
+2	4	1	2
+87	21	1	0
+88	0	1	8
+2	6	1	4
+5	2	1	2
+2	4	1	2
+5	2	0	4
+2	2	1	4
+61	20	1	7
+2	6	1	4
+2	6	0	4
+2	23	2	2
+2	6	1	4
+26	10	1	5
+2	2	0	12
+79	1	1	0
+89	21	1	10
+2	4	0	2
+26	11	1	5
+90	6	0	4
+91	2	1	4
+2	6	1	4
+92	17	0	3
+93	32	0	4
+2	4	1	2
+94	26	0	6
+19	0	0	8
+37	30	2	7
+64	2	1	4
+95	23	2	2
+38	4	0	0
+2	2	1	4
+5	6	1	4
+22	5	0	2
+2	2	1	14
+96	17	2	7
 \.
 
 
 --
--- Data for Name: locations; Type: TABLE DATA; Schema: public; Owner: xuo
+-- Data for Name: locations; Type: TABLE DATA; Schema: public; Owner: -
 --
 
 COPY public.locations (id, location) FROM stdin;
@@ -1061,28 +657,28 @@ COPY public.locations (id, location) FROM stdin;
 
 
 --
--- Name: crime_times_id_seq; Type: SEQUENCE SET; Schema: public; Owner: xuo
+-- Name: crime_times_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.crime_times_id_seq', 1, false);
 
 
 --
--- Name: crimes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: xuo
+-- Name: crimes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.crimes_id_seq', 1, false);
 
 
 --
--- Name: locations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: xuo
+-- Name: locations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
 SELECT pg_catalog.setval('public.locations_id_seq', 1, false);
 
 
 --
--- Name: crime_times crime_times_pkey; Type: CONSTRAINT; Schema: public; Owner: xuo
+-- Name: crime_times crime_times_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.crime_times
@@ -1090,7 +686,7 @@ ALTER TABLE ONLY public.crime_times
 
 
 --
--- Name: crimes crimes_pkey; Type: CONSTRAINT; Schema: public; Owner: xuo
+-- Name: crimes crimes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.crimes
@@ -1098,7 +694,7 @@ ALTER TABLE ONLY public.crimes
 
 
 --
--- Name: locations locations_pkey; Type: CONSTRAINT; Schema: public; Owner: xuo
+-- Name: locations locations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.locations

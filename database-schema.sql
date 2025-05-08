@@ -14,8 +14,7 @@ CREATE TABLE crime_types (
 
 CREATE TABLE crime_times (
     id SERIAL PRIMARY KEY,
-    date_occ TIMESTAMP,
-    time_occ INTEGER
+    date_occ TEXT
 );
 
 CREATE TABLE locations (
@@ -29,5 +28,3 @@ CREATE TABLE crimes_crime_types_crimes_times_locations (
     crime_time_id integer,
     location_id integer
 );
-
-\copy authors FROM 'authors.csv' DELIMITER ',' CSV NULL AS 'NULL'
