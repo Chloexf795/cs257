@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Crime Data API reference</title>
+</head>
+<body>
+    <pre>Crime Data API: endpoint reference
+All responses are in JSON
+
+REQUEST: /
+RESPONSE:
+    A greeting from this API to you.
+
+REQUEST: /help
+RESPONSE:
+    This message
+
+REQUEST: /types
+RESPONSE:
+    A list of types of crimes committed.
+
+REQUEST: /dates
+RESPONSE:
+    A list of months (yyyy-mm) of crimes committed in.
+
+REQUEST: /locations
+RESPONSE:
+    A list of districts of crimes committed in.
+
+# a more complicated example:
+REQUEST: /movies[?genre={GENRE}&amp;start_year={STARTYEAR}&amp;end_year={ENDYEAR}]
+RESPONSE:
+    A list of movies matching the specified GET parameters. If genre={GENRE}
+
+      start_year, int: reject any movie released earlier than this year
+      end_year, int: reject any movie released later than this year
+      genre: reject any movie whose genre does not match this genre exactly
+
+    For example:
+
+        /movies?start_year=1980&amp;genre=thriller
+
+    will return a list of all thriller movies released in 1980 or later.
+
+        /movies
+
+    will return a list of all the movies in the dataset.
+    </pre>
+</body>
+</html>
