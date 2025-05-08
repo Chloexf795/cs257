@@ -68,6 +68,96 @@ def get_dates():
     connection.close()
     return json.dumps(dates)
 
+
+@app.route('/rawcsv')
+def get_rawcsv():
+    '''Provides the entire crime dataset as CSV'''
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+        query = '''
+        SELECT crime_times.date_occ, locations.location, crime_types.crm_cd_desc, 
+               crimes.vict_age, crimes.vict_sex, crimes.premis_desc
+        FROM crimes
+        JOIN crimes_crime_types_crimes_times_locations ON crimes.id = crimes_crime_types_crimes_times_locations.crime_id
+        JOIN crime_types ON crime_types.id = crimes_crime_types_crimes_times_locations.crime_type_id
+        JOIN crime_times ON crime_times.id = crimes_crime_types_crimes_times_locations.crime_time_id
+        JOIN locations ON locations.id = crimes_crime_types_crimes_times_locations.location_id;
+        '''
+        cursor.execute(query)
+        rows = cursor.fetchall()
+    except Exception as e:
+        print(f"Error generating CSV: {e}", file=sys.stderr)
+        return "Database error", 500
+    finally:
+        connection.close()
+
+    def generate():
+        output = csv.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(['date', 'area', 'type', 'victim_age', 'victim_sex', 'location'])
+        yield output.getvalue()
+        output.seek(0)
+        output.truncate(0)
+
+        for row in rows:
+            writer.writerow(row)
+            yield output.getvalue()
+            output.seek(0)
+            output.truncate(0)
+
+    return Response(generate(), mimetype='text/csv', headers={"Content-Disposition": "attachment;filename=crime_data.csv"})
+
+@app.route('/crimes')
+def get_crimes():
+    '''Returns a list of crimes based on filters'''
+    start_date = request.args.get('start_date', '-infinity')
+    end_date = request.args.get('end_date', 'infinity')
+    area = request.args.get('area', None)
+    crime_type = request.args.get('type', None)
+
+    crimes = []
+    try:
+        connection = get_connection()
+        cursor = connection.cursor()
+
+        query = '''
+        SELECT crime_times.date_occ, locations.location, crime_types.crm_cd_desc, 
+               crimes.vict_age, crimes.vict_sex, crimes.premis_desc
+        FROM crimes
+        JOIN crimes_crime_types_crimes_times_locations ON crimes.id = crimes_crime_types_crimes_times_locations.crime_id
+        JOIN crime_types ON crime_types.id = crimes_crime_types_crimes_times_locations.crime_type_id
+        JOIN crime_times ON crime_times.id = crimes_crime_types_crimes_times_locations.crime_time_id
+        JOIN locations ON locations.id = crimes_crime_types_crimes_times_locations.location_id
+        WHERE crime_times.date_occ >= %s AND crime_times.date_occ <= %s
+        '''
+        params = [start_date, end_date]
+
+        if area:
+            query += ' AND locations.location = %s'
+            params.append(area)
+
+        if crime_type:
+            query += ' AND crime_types.crm_cd_desc = %s'
+            params.append(crime_type)
+
+        cursor.execute(query, params)
+        for row in cursor:
+            crimes.append({
+                "date": row[0],
+                "area": row[1],
+                "type": row[2],
+                "victim_age": row[3],
+                "victim_sex": row[4],
+                "location": row[5]
+            })
+    except Exception as e:
+        print(f"Error retrieving crimes: {e}", file=sys.stderr)
+        return "Database error", 500
+    finally:
+        connection.close()
+    return json.dumps(crimes)
+
 @app.route('/')
 def hello():
     return 'Hello, Welcome to Crime Data.'
