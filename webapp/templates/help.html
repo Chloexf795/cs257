@@ -4,47 +4,36 @@
     <title>Crime Data API reference</title>
 </head>
 <body>
-    <pre>Crime Data API: endpoint reference
-All responses are in JSON
+<pre>Crime Data API - Help
 
-REQUEST: /
-RESPONSE:
-    A greeting from this API to you.
+Welcome to the Crime Data API! Below are the available endpoints and their usage:
 
-REQUEST: /help
-RESPONSE:
-    This message
+1. GET /
+    - Description: Returns a simple welcome message.
+   
+1. GET /help
+    - Description: This page
 
-REQUEST: /types
-RESPONSE:
-    A list of types of crimes committed.
+2. GET /areas
+    - Description: Retrieves a list of all available crime areas.
 
-REQUEST: /dates
-RESPONSE:
-    A list of months (yyyy-mm) of crimes committed in.
+3. GET /types
+    - Description: Retrieves a list of all crime types.
 
-REQUEST: /locations
-RESPONSE:
-    A list of districts of crimes committed in.
+4. GET /dates
+    - Description: Retrieves a list of all recorded crime dates.
 
-# a more complicated example:
-REQUEST: /movies[?genre={GENRE}&amp;start_year={STARTYEAR}&amp;end_year={ENDYEAR}]
-RESPONSE:
-    A list of movies matching the specified GET parameters. If genre={GENRE}
+5. GET /rawcsv
+    - Description: Downloads the entire crime dataset in CSV format.
 
-      start_year, int: reject any movie released earlier than this year
-      end_year, int: reject any movie released later than this year
-      genre: reject any movie whose genre does not match this genre exactly
-
-    For example:
-
-        /movies?start_year=1980&amp;genre=thriller
-
-    will return a list of all thriller movies released in 1980 or later.
-
-        /movies
-
-    will return a list of all the movies in the dataset.
+6. GET /crimes
+    - Description: Retrieves crime data filtered by date, area, and/or crime type.
+    - Query Parameters:
+        - start_date: Filter crimes that occurred on or after this date (yyyy-mm).
+        - end_date: Filter crimes that occurred on or before this date (yyyy-mm).
+        - locations: Filter crimes from a specific location.
+        - type: Filter crimes by the crime type.
+    - Example: curl "/crimes?start_date=2025-01&end_date=2025-02&area=Topanga&type=BATTERY%20-%20SIMPLE%20ASSAULT"
     </pre>
 </body>
 </html>

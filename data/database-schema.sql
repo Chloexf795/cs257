@@ -2,29 +2,27 @@ CREATE TABLE crimes (
     id SERIAL PRIMARY KEY,
     vict_age INTEGER,
     vict_sex TEXT,
-    premis_desc TEXT
-);
-
-
-
-CREATE TABLE crime_types (
-    id integer NOT NULL,
-    crm_cd_desc TEXT
-);
-
-CREATE TABLE crime_times (
-    id SERIAL PRIMARY KEY,
-    date_occ TEXT
-);
-
-CREATE TABLE locations (
-    id SERIAL PRIMARY KEY,
     location TEXT
 );
 
-CREATE TABLE crimes_crime_types_crimes_times_locations (
+CREATE TABLE types (
+    id integer NOT NULL,
+    type TEXT
+);
+
+CREATE TABLE months (
+    id SERIAL PRIMARY KEY,
+    month TEXT
+);
+
+CREATE TABLE areas (
+    id SERIAL PRIMARY KEY,
+    area TEXT
+);
+
+CREATE TABLE crime_events (
     crime_id integer,
-    crime_type_id integer,
-    crime_time_id integer,
-    location_id integer
+    type_id integer,
+    month_id integer,
+    area_id integer
 );

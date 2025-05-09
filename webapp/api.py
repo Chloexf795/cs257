@@ -24,9 +24,9 @@ def get_connection():
         print(e, file=sys.stderr)
         exit()
 
-@app.route('/locations')
-def get_locations():
-    locations = []
+@app.route('/areas')
+def get_areas():
+    areas = []
     try:
         connection = get_connection()
         cursor = connection.cursor()
@@ -34,11 +34,11 @@ def get_locations():
         print(query)
         cursor.execute(query)
         for row in cursor:
-            locations.append(row[1])
+            areas.append(row[1])
     except Exception as e:
         print(e, file=sys.stderr)
     connection.close()
-    return json.dumps(locations)
+    return json.dumps(areas)
 
 @app.route('/types')
 def get_types():
@@ -176,43 +176,7 @@ def hello():
 
 @app.route('/help')
 def get_help():
-    help_text = """
-    Crime Data API - Help
-
-    Welcome to the Crime Data API! Below are the available endpoints and their usage:
-
-    1. GET /
-       - Description: Returns a simple welcome message.
-       - Example: curl http://localhost:5000/
-
-    2. GET /locations
-       - Description: Retrieves a list of all available crime locations.
-       - Example: curl http://localhost:5000/locations
-
-    3. GET /types
-       - Description: Retrieves a list of all crime types.
-       - Example: curl http://localhost:5000/types
-
-    4. GET /dates
-       - Description: Retrieves a list of all recorded crime dates.
-       - Example: curl http://localhost:5000/dates
-
-    5. GET /rawcsv
-       - Description: Downloads the entire crime dataset in CSV format.
-       - Example: curl http://localhost:5000/rawcsv
-
-    6. GET /crimes
-       - Description: Retrieves crime data filtered by date, area, and/or crime type.
-       - Query Parameters:
-         - start_date: Filter crimes that occurred on or after this date.
-         - end_date: Filter crimes that occurred on or before this date.
-         - area: Filter crimes from a specific location.
-         - type: Filter crimes by the crime type.
-       - Example: curl "http://localhost:5000/crimes?start_date=2025-01-01&end_date=2025-02-01&area=Topanga&type=BATTERY%20-%20SIMPLE%20ASSAULT"
-
-    For any issues or questions, please check the logs or contact the developers.
-    """
-    return help_text
+    return flask.render_template('help.html')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('A API to get crime data')

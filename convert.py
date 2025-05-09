@@ -5,7 +5,7 @@ Author: Chloe Xufeng, Owen Xu
 Reads crimeData2025.csv and writes:
 - crime_types.csv
 - crime_times.csv
-- locations.csv
+- areas.csv
 - crimes.csv
 """
 
@@ -18,13 +18,13 @@ INPUT_FILE = 'data/crimeData2025.csv'
 def main():
     crime_types = {}
     crime_times = {}
-    locations = {}
+    areas = {}
     crimes = {}
     crime_type_id = 0
     time_id = 0
-    location_id = 0
+    area_id = 0
     crime_id = 0
-    crimes_crime_types_crimes_times_locations = []
+    crimes_crime_types_crimes_times_areas = []
 
     with open(INPUT_FILE, newline='', encoding='utf-8') as f:
         reader = csv.reader(f)
@@ -34,7 +34,7 @@ def main():
             # Column positions based on file format
             date_occ = row[0]
             time_occ = row[1]
-            location = row[2]
+            area = row[2]
             crm_cd_desc = row[3]
             vict_age = row[4]
             vict_sex = row[5]
@@ -62,10 +62,10 @@ def main():
 
             # Handle locations
             #loc_key = (location, lat, lon)
-            if location not in locations:
-                locations[location] = location_id
-                location_id += 1
-            l_id = locations[location]
+            if area not in areas:
+                areas[area] = area_id
+                area_id += 1
+            a_id = areas[area]
             
             crime_key = (vict_age, vict_sex, premis_desc)
             if crime_key not in crimes:
@@ -75,7 +75,7 @@ def main():
             
 
             # Add to main crime table
-            crimes_crime_types_crimes_times_locations.append([c_id, ct_id, t_id, l_id])
+            crimes_crime_types_crimes_times_areas.append([c_id, ct_id, t_id, a_id])
 
     # Write files
     with open('data/crime_types.csv', 'w', newline='', encoding='utf-8') as f:
@@ -88,14 +88,14 @@ def main():
         for (year_month), id in crime_times.items():
             writer.writerow([id, year_month])
 
-    with open('data/locations.csv', 'w', newline='', encoding='utf-8') as f:
+    with open('data/areas.csv', 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
         '''
         for (loc, lat, lon), id in locations.items():
             writer.writerow([id, loc, lat, lon])
         '''
-        for (location, id) in locations.items():
-            writer.writerow([id, location])
+        for (area, id) in areas.items():
+            writer.writerow([id, area])
 
     with open('data/crimes.csv', 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
@@ -104,7 +104,7 @@ def main():
 
     with open('data/crimes_crime_types_crimes_times_locations.csv', 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
-        for ids in crimes_crime_types_crimes_times_locations:
+        for ids in crimes_crime_types_crimes_times_areas:
             writer.writerow(ids)
 
 if __name__ == '__main__':
