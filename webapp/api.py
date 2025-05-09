@@ -91,7 +91,8 @@ def get_rawcsv():
         print(f"Error generating CSV: {e}", file=sys.stderr)
         return "Database error", 500
     finally:
-        connection.close()
+        if 'connection' in locals():
+            connection.close()
 
     def generate():
         output = csv.StringIO()
@@ -132,26 +133,36 @@ def get_crimes():
         WHERE (%s IS NULL OR crime_times.date_occ >= %s) 
         AND (%s IS NULL OR crime_times.date_occ <= %s)
         '''
-        params = [start_date, end_date]
+        params = [start_date, start_date, end_date, end_date]
 
         if area:
-            query += ' AND locations.location = %s'
+            query += ' AND LOWER(locations.location) = LOWER(%s)'
             params.append(area)
 
         if crime_type:
-            query += ' AND crime_types.crm_cd_desc = %s'
+            query += ' AND LOWER(crime_types.crm_cd_desc) = LOWER(%s)'
             params.append(crime_type)
 
         cursor.execute(query, params)
-        for row in cursor:
-            crimes.append({
-                "date": row[0],
-                "area": row[1],
-                "type": row[2],
-                "victim_age": row[3],
-                "victim_sex": row[4],
-                "location": row[5]
-            })
+        rows = cursor.fetchall()
+
+        if not rows:
+            print("No records found for the given filters.", file=sys.stderr)
+            return json.dumps({"message": "No records found"}), 404
+
+        for row in rows:
+            if len(row) == 6:
+                crimes.append({
+                    "date": row[0],
+                    "area": row[1],
+                    "type": row[2],
+                    "victim_age": row[3],
+                    "victim_sex": row[4],
+                    "location": row[5]
+                })
+            else:
+                print(f"Unexpected row format: {row}", file=sys.stderr)
+
     except Exception as e:
         print(f"Error retrieving crimes: {e}", file=sys.stderr)
         return "Database error", 500
@@ -165,7 +176,43 @@ def hello():
 
 @app.route('/help')
 def get_help():
-    return flask.render_template('help.html')
+    help_text = """
+    Crime Data API - Help
+
+    Welcome to the Crime Data API! Below are the available endpoints and their usage:
+
+    1. GET /
+       - Description: Returns a simple welcome message.
+       - Example: curl http://localhost:5000/
+
+    2. GET /locations
+       - Description: Retrieves a list of all available crime locations.
+       - Example: curl http://localhost:5000/locations
+
+    3. GET /types
+       - Description: Retrieves a list of all crime types.
+       - Example: curl http://localhost:5000/types
+
+    4. GET /dates
+       - Description: Retrieves a list of all recorded crime dates.
+       - Example: curl http://localhost:5000/dates
+
+    5. GET /rawcsv
+       - Description: Downloads the entire crime dataset in CSV format.
+       - Example: curl http://localhost:5000/rawcsv
+
+    6. GET /crimes
+       - Description: Retrieves crime data filtered by date, area, and/or crime type.
+       - Query Parameters:
+         - start_date: Filter crimes that occurred on or after this date.
+         - end_date: Filter crimes that occurred on or before this date.
+         - area: Filter crimes from a specific location.
+         - type: Filter crimes by the crime type.
+       - Example: curl "http://localhost:5000/crimes?start_date=2025-01-01&end_date=2025-02-01&area=Topanga&type=BATTERY%20-%20SIMPLE%20ASSAULT"
+
+    For any issues or questions, please check the logs or contact the developers.
+    """
+    return help_text
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('A API to get crime data')
