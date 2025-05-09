@@ -16,39 +16,39 @@ SET xmloption = content;
 SET client_min_messages = warning;
 SET row_security = off;
 
-ALTER TABLE ONLY public.locations DROP CONSTRAINT locations_pkey;
+ALTER TABLE ONLY public.months DROP CONSTRAINT months_pkey;
 ALTER TABLE ONLY public.crimes DROP CONSTRAINT crimes_pkey;
-ALTER TABLE ONLY public.crime_times DROP CONSTRAINT crime_times_pkey;
-ALTER TABLE public.locations ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE ONLY public.areas DROP CONSTRAINT areas_pkey;
+ALTER TABLE public.months ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.crimes ALTER COLUMN id DROP DEFAULT;
-ALTER TABLE public.crime_times ALTER COLUMN id DROP DEFAULT;
-DROP SEQUENCE public.locations_id_seq;
-DROP TABLE public.locations;
+ALTER TABLE public.areas ALTER COLUMN id DROP DEFAULT;
+DROP TABLE public.types;
+DROP SEQUENCE public.months_id_seq;
+DROP TABLE public.months;
 DROP SEQUENCE public.crimes_id_seq;
-DROP TABLE public.crimes_crime_types_crimes_times_locations;
 DROP TABLE public.crimes;
-DROP TABLE public.crime_types;
-DROP SEQUENCE public.crime_times_id_seq;
-DROP TABLE public.crime_times;
+DROP TABLE public.crime_events;
+DROP SEQUENCE public.areas_id_seq;
+DROP TABLE public.areas;
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
 --
--- Name: crime_times; Type: TABLE; Schema: public; Owner: -
+-- Name: areas; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.crime_times (
+CREATE TABLE public.areas (
     id integer NOT NULL,
-    date_occ text
+    area text
 );
 
 
 --
--- Name: crime_times_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: areas_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.crime_times_id_seq
+CREATE SEQUENCE public.areas_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -58,19 +58,21 @@ CREATE SEQUENCE public.crime_times_id_seq
 
 
 --
--- Name: crime_times_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: areas_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.crime_times_id_seq OWNED BY public.crime_times.id;
+ALTER SEQUENCE public.areas_id_seq OWNED BY public.areas.id;
 
 
 --
--- Name: crime_types; Type: TABLE; Schema: public; Owner: -
+-- Name: crime_events; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.crime_types (
-    id integer NOT NULL,
-    crm_cd_desc text
+CREATE TABLE public.crime_events (
+    crime_id integer,
+    type_id integer,
+    month_id integer,
+    area_id integer
 );
 
 
@@ -82,19 +84,7 @@ CREATE TABLE public.crimes (
     id integer NOT NULL,
     vict_age integer,
     vict_sex text,
-    premis_desc text
-);
-
-
---
--- Name: crimes_crime_types_crimes_times_locations; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.crimes_crime_types_crimes_times_locations (
-    crime_id integer,
-    crime_type_id integer,
-    crime_time_id integer,
-    location_id integer
+    location text
 );
 
 
@@ -119,20 +109,20 @@ ALTER SEQUENCE public.crimes_id_seq OWNED BY public.crimes.id;
 
 
 --
--- Name: locations; Type: TABLE; Schema: public; Owner: -
+-- Name: months; Type: TABLE; Schema: public; Owner: -
 --
 
-CREATE TABLE public.locations (
+CREATE TABLE public.months (
     id integer NOT NULL,
-    location text
+    month text
 );
 
 
 --
--- Name: locations_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+-- Name: months_id_seq; Type: SEQUENCE; Schema: public; Owner: -
 --
 
-CREATE SEQUENCE public.locations_id_seq
+CREATE SEQUENCE public.months_id_seq
     AS integer
     START WITH 1
     INCREMENT BY 1
@@ -142,17 +132,27 @@ CREATE SEQUENCE public.locations_id_seq
 
 
 --
--- Name: locations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+-- Name: months_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
 --
 
-ALTER SEQUENCE public.locations_id_seq OWNED BY public.locations.id;
+ALTER SEQUENCE public.months_id_seq OWNED BY public.months.id;
 
 
 --
--- Name: crime_times id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: types; Type: TABLE; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.crime_times ALTER COLUMN id SET DEFAULT nextval('public.crime_times_id_seq'::regclass);
+CREATE TABLE public.types (
+    id integer NOT NULL,
+    type text
+);
+
+
+--
+-- Name: areas id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.areas ALTER COLUMN id SET DEFAULT nextval('public.areas_id_seq'::regclass);
 
 
 --
@@ -163,174 +163,45 @@ ALTER TABLE ONLY public.crimes ALTER COLUMN id SET DEFAULT nextval('public.crime
 
 
 --
--- Name: locations id; Type: DEFAULT; Schema: public; Owner: -
+-- Name: months id; Type: DEFAULT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.locations ALTER COLUMN id SET DEFAULT nextval('public.locations_id_seq'::regclass);
+ALTER TABLE ONLY public.months ALTER COLUMN id SET DEFAULT nextval('public.months_id_seq'::regclass);
 
 
 --
--- Data for Name: crime_times; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: areas; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public.crime_times (id, date_occ) FROM stdin;
-0	2025-01
-1	2025-02
-2	2025-03
+COPY public.areas (id, area) FROM stdin;
+0	Topanga
+1	Northeast
+2	Harbor
+3	Newton
+4	Southwest
+5	Southeast
+6	West Valley
+7	Mission
+8	Devonshire
+9	77th Street
+10	Hollenbeck
+11	Wilshire
+12	Pacific
+13	West LA
+14	Foothill
+15	Van Nuys
+16	Central
+17	Rampart
+18	N Hollywood
+19	Olympic
 \.
 
 
 --
--- Data for Name: crime_types; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: crime_events; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public.crime_types (id, crm_cd_desc) FROM stdin;
-0	BATTERY - SIMPLE ASSAULT
-1	OTHER MISCELLANEOUS CRIME
-2	VEHICLE - STOLEN
-3	THEFT FROM MOTOR VEHICLE - PETTY ($950 & UNDER)
-4	THEFT-GRAND ($950.01 & OVER)EXCPT,GUNS,FOWL,LIVESTK,PROD
-5	ROBBERY
-6	VEHICLE, STOLEN - OTHER (MOTORIZED SCOOTERS, BIKES, ETC)
-7	CHILD ANNOYING (17YRS & UNDER)
-8	VANDALISM - MISDEAMEANOR ($399 OR UNDER)
-9	ASSAULT WITH DEADLY WEAPON, AGGRAVATED ASSAULT
-10	VANDALISM - FELONY ($400 & OVER, ALL CHURCH VANDALISMS)
-11	BURGLARY
-12	ARSON
-13	CRIMINAL THREATS - NO WEAPON DISPLAYED
-14	SEX,UNLAWFUL(INC MUTUAL CONSENT, PENETRATION W/ FRGN OBJ
-15	BURGLARY FROM VEHICLE
-16	VEHICLE - ATTEMPT STOLEN
-17	INDECENT EXPOSURE
-18	RAPE, FORCIBLE
-19	TRESPASSING
-20	VIOLATION OF COURT ORDER
-21	CHILD NEGLECT (SEE 300 W.I.C.)
-22	THEFT OF IDENTITY
-23	THEFT PLAIN - PETTY ($950 & UNDER)
-24	EXTORTION
-25	ILLEGAL DUMPING
-26	THEFT FROM MOTOR VEHICLE - GRAND ($950.01 AND OVER)
-27	BRANDISH WEAPON
-28	BATTERY WITH SEXUAL CONTACT
-29	CHILD PORNOGRAPHY
-30	ASSAULT WITH DEADLY WEAPON ON POLICE OFFICER
-31	THEFT FROM PERSON - ATTEMPT
-32	SHOPLIFTING - PETTY THEFT ($950 & UNDER)
-\.
-
-
---
--- Data for Name: crimes; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY public.crimes (id, vict_age, vict_sex, premis_desc) FROM stdin;
-0	12	F	JUNIOR HIGH SCHOOL
-1	0	X	STREET
-2	0		STREET
-3	15	M	JUNIOR HIGH SCHOOL
-4	16	F	SINGLE FAMILY DWELLING
-5	0		PARKING LOT
-6	0	M	PARK/PLAYGROUND
-7	0	X	OTHER STORE
-8	53	M	HIGH SCHOOL
-9	0		SLIPS/DOCK/MARINA/BOAT
-10	10	M	ELEMENTARY SCHOOL
-11	16	M	STREET
-12	0	X	POLICE FACILITY
-13	42	M	OTHER BUSINESS
-14	16	M	BUS STOP
-15	0		GARAGE/CARPORT
-16	0	X	HIGH SCHOOL
-17	0	X	PARK/PLAYGROUND
-18	0	X	ELEMENTARY SCHOOL
-19	17	M	HIGH SCHOOL
-20	17	F	STREET
-21	14	F	HIGH SCHOOL
-22	15	F	HIGH SCHOOL
-23	32	M	PARK/PLAYGROUND
-24	0	M	STREET
-25	13	M	BUS STOP
-26	0	X	JUNIOR HIGH SCHOOL
-27	14	M	JUNIOR HIGH SCHOOL
-28	32	F	PARKING LOT
-29	13	F	JUNIOR HIGH SCHOOL
-30	13	M	HIGH SCHOOL
-31	0		OTHER PREMISE
-32	13	F	MULTI-UNIT DWELLING (APARTMENT, DUPLEX, ETC)
-33	51	M	STORAGE SHED
-34	16	F	BUS STOP
-35	30	F	PARKING LOT
-36	54	M	JUNIOR HIGH SCHOOL
-37	13	M	JUNIOR HIGH SCHOOL
-38	0	M	JUNIOR HIGH SCHOOL
-39	29	F	HIGH SCHOOL
-40	0	M	ELEMENTARY SCHOOL
-41	59	M	HIGH SCHOOL
-42	15	M	HIGH SCHOOL
-43	0		SIDEWALK
-44	18	F	MULTI-UNIT DWELLING (APARTMENT, DUPLEX, ETC)
-45	0		HOSPITAL
-46	33	M	PARK/PLAYGROUND
-47	15	F	STREET
-48	0		MULTI-UNIT DWELLING (APARTMENT, DUPLEX, ETC)
-49	4	F	HOSPITAL
-50	13	F	PARK/PLAYGROUND
-51	13	M	DRIVEWAY
-52	0	F	ELEMENTARY SCHOOL
-53	0		ELEMENTARY SCHOOL
-54	40	M	STREET
-55	18	M	HIGH SCHOOL
-56	24	X	HIGH SCHOOL
-57	0		BUS DEPOT/TERMINAL, OTHER THAN MTA
-58	51	M	COLLEGE/JUNIOR COLLEGE/UNIVERSITY
-59	0	M	HIGH SCHOOL
-60	24	M	COLLEGE/JUNIOR COLLEGE/UNIVERSITY
-61	36	M	JUNIOR HIGH SCHOOL
-62	14	F	VEHICLE, PASSENGER/TRUCK
-63	14	M	STREET
-64	0		SINGLE FAMILY DWELLING
-65	22	M	PARK/PLAYGROUND
-66	35	M	SPECIALTY SCHOOL/OTHER
-67	16	M	PARK/PLAYGROUND
-68	0	M	DETENTION/JAIL FACILITY
-69	16	M	HIGH SCHOOL
-70	18	M	STREET
-71	49	M	JUNIOR HIGH SCHOOL
-72	29	M	PARK/PLAYGROUND
-73	70	F	SINGLE FAMILY DWELLING
-74	17	F	HIGH SCHOOL
-75	11	M	HIGH SCHOOL
-76	16	F	HIGH SCHOOL
-77	36	M	ELEMENTARY SCHOOL
-78	14	F	STREET
-79	35	M	STREET
-80	31	M	VEHICLE, PASSENGER/TRUCK
-81	36	F	ELEMENTARY SCHOOL
-82	25	F	PARK/PLAYGROUND
-83	14	M	DRIVEWAY
-84	17	F	MTA BUS
-85	17	F	PARKING LOT
-86	46	M	OTHER BUSINESS
-87	4	F	STREET
-88	67	F	JUNIOR HIGH SCHOOL
-89	11	M	SINGLE FAMILY DWELLING
-90	0		YARD (RESIDENTIAL/BUSINESS)
-91	0		COLLEGE/JUNIOR COLLEGE/UNIVERSITY
-92	16	F	STREET
-93	24	X	OTHER BUSINESS
-94	68	M	PARKING LOT
-95	57	F	HIGH SCHOOL
-96	35	F	HIGH SCHOOL
-\.
-
-
---
--- Data for Name: crimes_crime_types_crimes_times_locations; Type: TABLE DATA; Schema: public; Owner: -
---
-
-COPY public.crimes_crime_types_crimes_times_locations (crime_id, crime_type_id, crime_time_id, location_id) FROM stdin;
+COPY public.crime_events (crime_id, type_id, month_id, area_id) FROM stdin;
 0	0	0	0
 1	1	1	1
 2	2	2	2
@@ -629,38 +500,167 @@ COPY public.crimes_crime_types_crimes_times_locations (crime_id, crime_type_id, 
 
 
 --
--- Data for Name: locations; Type: TABLE DATA; Schema: public; Owner: -
+-- Data for Name: crimes; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-COPY public.locations (id, location) FROM stdin;
-0	Topanga
-1	Northeast
-2	Harbor
-3	Newton
-4	Southwest
-5	Southeast
-6	West Valley
-7	Mission
-8	Devonshire
-9	77th Street
-10	Hollenbeck
-11	Wilshire
-12	Pacific
-13	West LA
-14	Foothill
-15	Van Nuys
-16	Central
-17	Rampart
-18	N Hollywood
-19	Olympic
+COPY public.crimes (id, vict_age, vict_sex, location) FROM stdin;
+0	12	F	JUNIOR HIGH SCHOOL
+1	0	X	STREET
+2	0		STREET
+3	15	M	JUNIOR HIGH SCHOOL
+4	16	F	SINGLE FAMILY DWELLING
+5	0		PARKING LOT
+6	0	M	PARK/PLAYGROUND
+7	0	X	OTHER STORE
+8	53	M	HIGH SCHOOL
+9	0		SLIPS/DOCK/MARINA/BOAT
+10	10	M	ELEMENTARY SCHOOL
+11	16	M	STREET
+12	0	X	POLICE FACILITY
+13	42	M	OTHER BUSINESS
+14	16	M	BUS STOP
+15	0		GARAGE/CARPORT
+16	0	X	HIGH SCHOOL
+17	0	X	PARK/PLAYGROUND
+18	0	X	ELEMENTARY SCHOOL
+19	17	M	HIGH SCHOOL
+20	17	F	STREET
+21	14	F	HIGH SCHOOL
+22	15	F	HIGH SCHOOL
+23	32	M	PARK/PLAYGROUND
+24	0	M	STREET
+25	13	M	BUS STOP
+26	0	X	JUNIOR HIGH SCHOOL
+27	14	M	JUNIOR HIGH SCHOOL
+28	32	F	PARKING LOT
+29	13	F	JUNIOR HIGH SCHOOL
+30	13	M	HIGH SCHOOL
+31	0		OTHER PREMISE
+32	13	F	MULTI-UNIT DWELLING (APARTMENT, DUPLEX, ETC)
+33	51	M	STORAGE SHED
+34	16	F	BUS STOP
+35	30	F	PARKING LOT
+36	54	M	JUNIOR HIGH SCHOOL
+37	13	M	JUNIOR HIGH SCHOOL
+38	0	M	JUNIOR HIGH SCHOOL
+39	29	F	HIGH SCHOOL
+40	0	M	ELEMENTARY SCHOOL
+41	59	M	HIGH SCHOOL
+42	15	M	HIGH SCHOOL
+43	0		SIDEWALK
+44	18	F	MULTI-UNIT DWELLING (APARTMENT, DUPLEX, ETC)
+45	0		HOSPITAL
+46	33	M	PARK/PLAYGROUND
+47	15	F	STREET
+48	0		MULTI-UNIT DWELLING (APARTMENT, DUPLEX, ETC)
+49	4	F	HOSPITAL
+50	13	F	PARK/PLAYGROUND
+51	13	M	DRIVEWAY
+52	0	F	ELEMENTARY SCHOOL
+53	0		ELEMENTARY SCHOOL
+54	40	M	STREET
+55	18	M	HIGH SCHOOL
+56	24	X	HIGH SCHOOL
+57	0		BUS DEPOT/TERMINAL, OTHER THAN MTA
+58	51	M	COLLEGE/JUNIOR COLLEGE/UNIVERSITY
+59	0	M	HIGH SCHOOL
+60	24	M	COLLEGE/JUNIOR COLLEGE/UNIVERSITY
+61	36	M	JUNIOR HIGH SCHOOL
+62	14	F	VEHICLE, PASSENGER/TRUCK
+63	14	M	STREET
+64	0		SINGLE FAMILY DWELLING
+65	22	M	PARK/PLAYGROUND
+66	35	M	SPECIALTY SCHOOL/OTHER
+67	16	M	PARK/PLAYGROUND
+68	0	M	DETENTION/JAIL FACILITY
+69	16	M	HIGH SCHOOL
+70	18	M	STREET
+71	49	M	JUNIOR HIGH SCHOOL
+72	29	M	PARK/PLAYGROUND
+73	70	F	SINGLE FAMILY DWELLING
+74	17	F	HIGH SCHOOL
+75	11	M	HIGH SCHOOL
+76	16	F	HIGH SCHOOL
+77	36	M	ELEMENTARY SCHOOL
+78	14	F	STREET
+79	35	M	STREET
+80	31	M	VEHICLE, PASSENGER/TRUCK
+81	36	F	ELEMENTARY SCHOOL
+82	25	F	PARK/PLAYGROUND
+83	14	M	DRIVEWAY
+84	17	F	MTA BUS
+85	17	F	PARKING LOT
+86	46	M	OTHER BUSINESS
+87	4	F	STREET
+88	67	F	JUNIOR HIGH SCHOOL
+89	11	M	SINGLE FAMILY DWELLING
+90	0		YARD (RESIDENTIAL/BUSINESS)
+91	0		COLLEGE/JUNIOR COLLEGE/UNIVERSITY
+92	16	F	STREET
+93	24	X	OTHER BUSINESS
+94	68	M	PARKING LOT
+95	57	F	HIGH SCHOOL
+96	35	F	HIGH SCHOOL
 \.
 
 
 --
--- Name: crime_times_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+-- Data for Name: months; Type: TABLE DATA; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.crime_times_id_seq', 1, false);
+COPY public.months (id, month) FROM stdin;
+0	2025-01
+1	2025-02
+2	2025-03
+\.
+
+
+--
+-- Data for Name: types; Type: TABLE DATA; Schema: public; Owner: -
+--
+
+COPY public.types (id, type) FROM stdin;
+0	BATTERY - SIMPLE ASSAULT
+1	OTHER MISCELLANEOUS CRIME
+2	VEHICLE - STOLEN
+3	THEFT FROM MOTOR VEHICLE - PETTY ($950 & UNDER)
+4	THEFT-GRAND ($950.01 & OVER)EXCPT,GUNS,FOWL,LIVESTK,PROD
+5	ROBBERY
+6	VEHICLE, STOLEN - OTHER (MOTORIZED SCOOTERS, BIKES, ETC)
+7	CHILD ANNOYING (17YRS & UNDER)
+8	VANDALISM - MISDEAMEANOR ($399 OR UNDER)
+9	ASSAULT WITH DEADLY WEAPON, AGGRAVATED ASSAULT
+10	VANDALISM - FELONY ($400 & OVER, ALL CHURCH VANDALISMS)
+11	BURGLARY
+12	ARSON
+13	CRIMINAL THREATS - NO WEAPON DISPLAYED
+14	SEX,UNLAWFUL(INC MUTUAL CONSENT, PENETRATION W/ FRGN OBJ
+15	BURGLARY FROM VEHICLE
+16	VEHICLE - ATTEMPT STOLEN
+17	INDECENT EXPOSURE
+18	RAPE, FORCIBLE
+19	TRESPASSING
+20	VIOLATION OF COURT ORDER
+21	CHILD NEGLECT (SEE 300 W.I.C.)
+22	THEFT OF IDENTITY
+23	THEFT PLAIN - PETTY ($950 & UNDER)
+24	EXTORTION
+25	ILLEGAL DUMPING
+26	THEFT FROM MOTOR VEHICLE - GRAND ($950.01 AND OVER)
+27	BRANDISH WEAPON
+28	BATTERY WITH SEXUAL CONTACT
+29	CHILD PORNOGRAPHY
+30	ASSAULT WITH DEADLY WEAPON ON POLICE OFFICER
+31	THEFT FROM PERSON - ATTEMPT
+32	SHOPLIFTING - PETTY THEFT ($950 & UNDER)
+\.
+
+
+--
+-- Name: areas_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+--
+
+SELECT pg_catalog.setval('public.areas_id_seq', 1, false);
 
 
 --
@@ -671,18 +671,18 @@ SELECT pg_catalog.setval('public.crimes_id_seq', 1, false);
 
 
 --
--- Name: locations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
+-- Name: months_id_seq; Type: SEQUENCE SET; Schema: public; Owner: -
 --
 
-SELECT pg_catalog.setval('public.locations_id_seq', 1, false);
+SELECT pg_catalog.setval('public.months_id_seq', 1, false);
 
 
 --
--- Name: crime_times crime_times_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: areas areas_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.crime_times
-    ADD CONSTRAINT crime_times_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.areas
+    ADD CONSTRAINT areas_pkey PRIMARY KEY (id);
 
 
 --
@@ -694,11 +694,11 @@ ALTER TABLE ONLY public.crimes
 
 
 --
--- Name: locations locations_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+-- Name: months months_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
-ALTER TABLE ONLY public.locations
-    ADD CONSTRAINT locations_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.months
+    ADD CONSTRAINT months_pkey PRIMARY KEY (id);
 
 
 --
