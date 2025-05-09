@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 '''
     api.py
-    Owen Xu, 21 April 2025
+    Owen Xu, Chloe Xufeng
+
 '''
 import sys
 import argparse
@@ -10,6 +11,7 @@ import json
 import csv
 import config
 import psycopg2
+from flask import request, Response
 
 app = flask.Flask(__name__)
 
@@ -71,13 +73,12 @@ def get_dates():
 
 @app.route('/rawcsv')
 def get_rawcsv():
-    '''Provides the entire crime dataset as CSV'''
     try:
         connection = get_connection()
         cursor = connection.cursor()
         query = '''
-        SELECT crime_times.date_occ, locations.location, crime_types.crm_cd_desc, 
-               crimes.vict_age, crimes.vict_sex, crimes.premis_desc
+         SELECT crime_times.date_occ, locations.location, crime_types.crm_cd_desc, 
+                crimes.vict_age, crimes.vict_sex, crimes.premis_desc
         FROM crimes
         JOIN crimes_crime_types_crimes_times_locations ON crimes.id = crimes_crime_types_crimes_times_locations.crime_id
         JOIN crime_types ON crime_types.id = crimes_crime_types_crimes_times_locations.crime_type_id
@@ -110,9 +111,8 @@ def get_rawcsv():
 
 @app.route('/crimes')
 def get_crimes():
-    '''Returns a list of crimes based on filters'''
-    start_date = request.args.get('start_date', '-infinity')
-    end_date = request.args.get('end_date', 'infinity')
+    start_date = request.args.get('start_date', None)
+    end_date = request.args.get('end_date', None)
     area = request.args.get('area', None)
     crime_type = request.args.get('type', None)
 
@@ -129,7 +129,8 @@ def get_crimes():
         JOIN crime_types ON crime_types.id = crimes_crime_types_crimes_times_locations.crime_type_id
         JOIN crime_times ON crime_times.id = crimes_crime_types_crimes_times_locations.crime_time_id
         JOIN locations ON locations.id = crimes_crime_types_crimes_times_locations.location_id
-        WHERE crime_times.date_occ >= %s AND crime_times.date_occ <= %s
+        WHERE (%s IS NULL OR crime_times.date_occ >= %s) 
+        AND (%s IS NULL OR crime_times.date_occ <= %s)
         '''
         params = [start_date, end_date]
 
