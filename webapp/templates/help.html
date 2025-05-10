@@ -27,11 +27,11 @@ Welcome to the Crime Data API! Below are the available endpoints and their usage
     - Description: Downloads the entire crime dataset in CSV format.
 
 6. GET /crimes
-    - Description: Retrieves crime data filtered by date, area, and/or crime type.
+    - Description: Retrieves crime data filtered by month, area, and/or crime type.
     - Query Parameters:
         - start_date: Filter crimes that occurred on or after this date (yyyy-mm).
         - end_date: Filter crimes that occurred on or before this date (yyyy-mm).
-        - locations: Filter crimes from a specific location.
+        - area: Filter crimes from a specific location.
         - type: Filter crimes by the crime type.
     - Example: curl "/crimes?start_date=2025-01&end_date=2025-02&area=Topanga&type=BATTERY%20-%20SIMPLE%20ASSAULT"
     </pre>

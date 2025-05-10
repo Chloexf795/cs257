@@ -77,13 +77,13 @@ def get_rawcsv():
         connection = get_connection()
         cursor = connection.cursor()
         query = '''
-         SELECT crime_times.date_occ, locations.location, crime_types.crm_cd_desc, 
-                crimes.vict_age, crimes.vict_sex, crimes.premis_desc
-        FROM crimes
-        JOIN crimes_crime_types_crimes_times_locations ON crimes.id = crimes_crime_types_crimes_times_locations.crime_id
-        JOIN crime_types ON crime_types.id = crimes_crime_types_crimes_times_locations.crime_type_id
-        JOIN crime_times ON crime_times.id = crimes_crime_types_crimes_times_locations.crime_time_id
-        JOIN locations ON locations.id = crimes_crime_types_crimes_times_locations.location_id;
+            SELECT months.month, areas.area, types.type,
+                   crimes.vict_age, crimes.vict_sex, crimes.location
+            FROM crimes
+            JOIN crime_events ON crimes.id = crime_events.crime_id
+            JOIN types ON types.id = crime_events.type_id
+            JOIN months ON months.id = crime_events.month_id
+            JOIN areas ON areas.id = crime_events.area_id;
         '''
         cursor.execute(query)
         rows = cursor.fetchall()
@@ -97,7 +97,7 @@ def get_rawcsv():
     def generate():
         output = csv.StringIO()
         writer = csv.writer(output)
-        writer.writerow(['date', 'area', 'type', 'victim_age', 'victim_sex', 'location'])
+        writer.writerow(['month', 'area', 'type', 'victim_age', 'victim_sex', 'location'])
         yield output.getvalue()
         output.seek(0)
         output.truncate(0)
@@ -123,24 +123,24 @@ def get_crimes():
         cursor = connection.cursor()
 
         query = '''
-        SELECT crime_times.date_occ, locations.location, crime_types.crm_cd_desc, 
-               crimes.vict_age, crimes.vict_sex, crimes.premis_desc
-        FROM crimes
-        JOIN crimes_crime_types_crimes_times_locations ON crimes.id = crimes_crime_types_crimes_times_locations.crime_id
-        JOIN crime_types ON crime_types.id = crimes_crime_types_crimes_times_locations.crime_type_id
-        JOIN crime_times ON crime_times.id = crimes_crime_types_crimes_times_locations.crime_time_id
-        JOIN locations ON locations.id = crimes_crime_types_crimes_times_locations.location_id
-        WHERE (%s IS NULL OR crime_times.date_occ >= %s) 
-        AND (%s IS NULL OR crime_times.date_occ <= %s)
+            SELECT months.month, areas.area, types.type,
+                   crimes.vict_age, crimes.vict_sex, crimes.location
+            FROM crimes
+            JOIN crime_events ON crimes.id = crime_events.crime_id
+            JOIN types ON types.id = crime_events.type_id
+            JOIN months ON months.id = crime_events.month_id
+            JOIN areas ON areas.id = crime_events.area_id
+            WHERE (%s IS NULL OR months.month >= %s) 
+            AND (%s IS NULL OR months.month <= %s)
         '''
         params = [start_date, start_date, end_date, end_date]
 
         if area:
-            query += ' AND LOWER(locations.location) = LOWER(%s)'
+            query += ' AND LOWER(areas.area) = LOWER(%s)'
             params.append(area)
 
         if crime_type:
-            query += ' AND LOWER(crime_types.crm_cd_desc) = LOWER(%s)'
+            query += ' AND LOWER(types.type) = LOWER(%s)'
             params.append(crime_type)
 
         cursor.execute(query, params)
@@ -153,7 +153,7 @@ def get_crimes():
         for row in rows:
             if len(row) == 6:
                 crimes.append({
-                    "date": row[0],
+                    "month": row[0],
                     "area": row[1],
                     "type": row[2],
                     "victim_age": row[3],
