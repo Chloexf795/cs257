@@ -30,7 +30,7 @@ def get_areas():
     try:
         connection = get_connection()
         cursor = connection.cursor()
-        query = 'SELECT * FROM locations'
+        query = 'SELECT * FROM areas'
         print(query)
         cursor.execute(query)
         for row in cursor:
@@ -46,7 +46,7 @@ def get_types():
     try:
         connection = get_connection()
         cursor = connection.cursor()
-        query = 'SELECT * FROM crime_types'
+        query = 'SELECT * FROM types'
         cursor.execute(query)
         for row in cursor:
             types.append(row[1])
@@ -55,20 +55,20 @@ def get_types():
     connection.close()
     return json.dumps(types)
 
-@app.route('/dates')
-def get_dates():
-    dates = []
+@app.route('/months')
+def get_months():
+    months = []
     try:
         connection = get_connection()
         cursor = connection.cursor()
-        query = 'SELECT * FROM crime_times'
+        query = 'SELECT * FROM months'
         cursor.execute(query)
         for row in cursor:
-            dates.append(row[1])
+            months.append(row[1])
     except Exception as e:
         print(e, file=sys.stderr)
     connection.close()
-    return json.dumps(dates)
+    return json.dumps(months)
 
 
 @app.route('/rawcsv')
@@ -112,8 +112,8 @@ def get_rawcsv():
 
 @app.route('/crimes')
 def get_crimes():
-    start_date = request.args.get('start_date', None)
-    end_date = request.args.get('end_date', None)
+    start_month = request.args.get('start_month', None)
+    end_month = request.args.get('end_month', None)
     area = request.args.get('area', None)
     crime_type = request.args.get('type', None)
 
@@ -133,7 +133,7 @@ def get_crimes():
             WHERE (%s IS NULL OR months.month >= %s) 
             AND (%s IS NULL OR months.month <= %s)
         '''
-        params = [start_date, start_date, end_date, end_date]
+        params = [start_month, start_month, end_month, end_month]
 
         if area:
             query += ' AND LOWER(areas.area) = LOWER(%s)'
