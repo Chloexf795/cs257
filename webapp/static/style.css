@@ -17,6 +17,11 @@ h1 {
     height: 100vh;
 }
 
+.table {
+    border-collapse: collapse;
+}
+
+
 .demographics-container {
     display: flex;
     flex-wrap: wrap;
@@ -56,6 +61,12 @@ h1 {
     border: none;
     cursor: pointer;
     width: 100%;
+}
+
+.selector{
+    background: "f0f0f0";
+    width: 150px;
+    height: 25px;
 }
 
 .filter-button:hover {

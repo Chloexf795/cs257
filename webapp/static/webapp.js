@@ -1,22 +1,28 @@
 window.addEventListener('load', initialize);
 
 function initialize() {
-    var element = document.getElementById('types_button');
-    if (element) {
-        element.onclick = onTypesButton;
+    var elementTypes = document.getElementById('types_selector');
+    if (elementTypes) {
+        elementTypes.onclick = loadTypesSelector();
     }
-    var element = document.getElementById('areas_button');
-    if (element) {
-        element.onclick = onAreasButton;
+    
+    var elementAreas = document.getElementById('areas_selector');
+    if (elementAreas) {
+        elementAreas.onclick = loadAreasSelector();
     }
-    var element = document.getElementById('start_dates_button');
-    if (element) {
-        element.onclick = onStartDatesButton;
+    var elementStartDates = document.getElementById('start_dates_selector');
+    if (elementStartDates) {
+        elementStartDates.onclick = loadStartDatesSelector();
     }
-    var element = document.getElementById('end_dates_button');
-    if (element) {
-        element.onclick = onEndDatesButton;
+    var elementEndDates = document.getElementById('end_dates_selector');
+    if (elementEndDates) {
+        elementEndDates.onclick = loadEndDatesSelector();
     }
+    var search = document.getElementById('search_button');
+    if (search) {
+        search.onclick = onCrimesSelectionChanged;
+    }
+    
 }
 
 function getAPIBaseURL() {
@@ -24,24 +30,24 @@ function getAPIBaseURL() {
     return baseURL
 }
 
-function onTypesButton() {
-    var url = getAPIBaseURL() + '/types/';
+//onTypesButton()
+function loadTypesSelector() {
+    var url = getAPIBaseURL() + '/types';
 
     fetch(url, {method: 'get'})
 
     .then((response) => response.json())
 
     .then(function(types) {
-        var listBody = '';
+        var selectorBody = '';
         for (var k = 0; k < types.length; k++) {
             var type = types[k];
-            listBody += '<li>' + type.toLowerCase()
-                      + '</li>\n';
+            selectorBody += '<option>' + type.toLowerCase() + '</option>\n' 
         }
 
-        var typesListElement = document.getElementById('types_list');
-        if (typesListElement) {
-            typesListElement.innerHTML = listBody;
+        var selector = document.getElementById('types_selector');
+        if (selector) {
+            selector.innerHTML = selectorBody;
         }
     })
 
@@ -50,50 +56,23 @@ function onTypesButton() {
     });
 }
 
-function onAreasButton() {
-    var url = getAPIBaseURL() + '/areas/';
+function loadAreasSelector() {
+    var url = getAPIBaseURL() + '/areas';
 
     fetch(url, {method: 'get'})
 
     .then((response) => response.json())
 
     .then(function(areas) {
-        var listBody = '';
+        var selectorBody = '';
         for (var k = 0; k < areas.length; k++) {
             var area = areas[k];
-            listBody += '<li>' + area
-                      + '</li>\n';
+            selectorBody += '<option>' + area + '</option>\n';
         }
 
-        var areasListElement = document.getElementById('areas_list');
-        if (areasListElement) {
-            areasListElement.innerHTML = listBody;
-        }
-    })
-
-    .catch(function(error) {
-        console.log(error);
-    });
-}
-
-function onStartDatesButton() {
-    var url = getAPIBaseURL() + '/dates/';
-
-    fetch(url, {method: 'get'})
-
-    .then((response) => response.json())
-
-    .then(function(dates) {
-        var listBody = '';
-        for (var k = 0; k < dates.length; k++) {
-            var date = dates[k];
-            listBody += '<li>' + date
-                      + '</li>\n';
-        }
-
-        var StartdatesListElement = document.getElementById('start_dates_list');
-        if (StartdatesListElement) {
-            StartdatesListElement.innerHTML = listBody;
+        var selector = document.getElementById('areas_selector');
+        if (selector) {
+            selector.innerHTML = selectorBody;
         }
     })
 
@@ -102,28 +81,97 @@ function onStartDatesButton() {
     });
 }
 
-function onEndDatesButton() {
-    var url = getAPIBaseURL() + '/dates/';
+function loadStartDatesSelector() {
+    var url = getAPIBaseURL() + '/dates';
 
     fetch(url, {method: 'get'})
 
     .then((response) => response.json())
 
     .then(function(dates) {
-        var listBody = '';
+        var selectorBody = '';
         for (var k = 0; k < dates.length; k++) {
             var date = dates[k];
-            listBody += '<li>' + date
-                      + '</li>\n';
+            selectorBody += '<option>' + date + '</option>\n';
         }
 
-        var endDatesListElement = document.getElementById('end_dates_list');
-        if (endDatesListElement) {
-            endDatesListElement.innerHTML = listBody;
+        var selector = document.getElementById('start_dates_selector');
+        if (selector) {
+            selector.innerHTML = selectorBody;
         }
     })
 
     .catch(function(error) {
         console.log(error);
     });
+}
+
+function loadEndDatesSelector() {
+    var url = getAPIBaseURL() + '/dates';
+
+    fetch(url, {method: 'get'})
+
+    .then((response) => response.json())
+
+    .then(function(dates) {
+        var selectorBody = '';
+        for (var k = 0; k < dates.length; k++) {
+            var date = dates[k];
+            selectorBody += '<option>' + date
+                      + '</option>\n';
+        }
+
+        var endDatesSelectorElement = document.getElementById('end_dates_selector');
+        if (endDatesSelectorElement) {
+            endDatesSelectorElement.innerHTML = selectorBody;
+        }
+    })
+
+    .catch(function(error) {
+        console.log(error);
+    });
+}
+
+function onCrimesSelectionChanged() {
+    var elementTypes = document.getElementById('types_selector');
+    var elementAreas = document.getElementById('areas_selector');
+    var elementStartDates = document.getElementById('start_dates_selector');
+    var elementEndDates = document.getElementById('end_dates_selector');
+    type = elementTypes.value
+    area = elementAreas.value
+    start_date = elementStartDates.value
+    end_date = elementEndDates.value
+
+    let url = getAPIBaseURL() + '/crimes?' + 'type=' + type 
+    + '&area=' + area 
+    + '&start_date=' + start_date 
+    + '&end_date=' + end_date
+
+    fetch(url, {method:'get'})
+
+    .then((response) => response.json())
+
+    .then (function(crimes) {
+
+        tableBody  = '<tr>'
+        + '<td>' + 'id' + '</td>'
+        + '<td>' + 'victim age' + '</td>'
+        + '<td>' + 'victim sex' + '</td>'
+        + '<td>' + 'location' + '</td>'
+        + '</tr>\n';
+        for (let k = 0; k < crimes.length; k++) {
+            let crime = crimes[k];
+            tableBody += '<tr>'
+                            + '<td>' + k+1 + '</td>'
+                            + '<td>' + crime['victim_age'] + '</td>'
+                            + '<td>' + crime['victim_sex'] + '</td>'
+                            + '<td>' + crime['location'] + '</td>'
+                            + '</tr>\n';
+        }
+    })
+    
+    let crimesTable = document.getElementById('crimes_table');
+    if (crimesTable) {
+        crimesTable.innerHTML = tableBody
+    }
 }

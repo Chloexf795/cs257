@@ -11,13 +11,13 @@ import argparse
 import flask
 import api
 
-app = flask.Flask(__name__, static_folder='static', template_folder='template')
+app = flask.Flask(__name__, static_folder='static', template_folder='templates')
 app.register_blueprint(api.api, url_prefix='/api')
 
 @app.route('/')
 def home():
     return flask.render_template('index.html')
-
+"""
 @app.route('/index.html')
 def index():
     return flask.render_template('index.html')
@@ -29,6 +29,7 @@ def mockup1():
 @app.route('/mockup2.html')
 def mockup2():
     return flask.render_template('mockup2.html')
+"""
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('A tiny Flask application, including API')

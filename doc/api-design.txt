@@ -5,78 +5,46 @@ text/csv
 Provides the full crime dataset as a CSV file. 
 
 EXAMPLE: 
-/rawcsv
 Triggers download of crime_data.csv
 
 REQUEST: /area
 
 RESPONSE: a JSON list, each of which represents one district.
-
-EXAMPLE: /area
-{0: "Central", 1: "Wilshire", ...}
+["Topanga", "Northeast", "Harbor", "Newton", ...,"Olympic"]
 
 
 REQUEST: /type
 
 RESPONSE: a JSON list, each of which represents one type of crimes.
-
-EXAMPLE: /type
-{0: "VEHICLE - STOLEN", 1: "BURGLARY FROM VEHICLE", ...}
+["BATTERY - SIMPLE ASSAULT", "OTHER MISCELLANEOUS CRIME", "VEHICLE - STOLEN", ...,"SHOPLIFTING - PETTY THEFT ($950 & UNDER)"]
 
 REQUEST: /crimes
-
 GET parameters
-	start_date (Optional, default: -infinity) – return only crimes after the start date
-
-	end_date (Optional, default: infinity) – return only crimes before the end date
-
+	start_month (Optional, default: -infinity) – return crimes in and after the start month
+	end_month (Optional, default: infinity) – return crimes in and before the end month
 	area (Optional, default: all) – return only areas that are chosen from areas api
-
 	type (Optional, default: all) – return only crime types that are chosen from types api
 
 RESPONSE: 
 A JSON list of dictionaries, one for each case, reported by the order in the dataset. Each dictionary in this list will have the following fields.
-	start_date – (TEXT) the start month of the cases, in format of "yyyy-mm"
-	end_date – (TEXT) the end month of the cases, in format of "yyyy-mm"
+	start_month – (TEXT) the start month of the cases, in format of "yyyy-mm"
+	end_month – (TEXT) the end month of the cases, in format of "yyyy-mm"
 	area – (TEXT) the districts of the cases 
 	type – (TEXT) the type of crimes
 
 EXAMPLE:
-/crimes?start_date=2023-03&end_date=2023-04&area=Central Park
-[
-	{
-		“date”: “2023-03”
-		“area”: “Central",
-		“type”: “Assault”,
-		“victim_age”: 46
-		“victim_sex”: M
-		“location”: “Street”
-	}
-]
+/crimes?start_month=2025-01&area=West%20LA&type=CRIMINAL%20THREATS%20-%20NO%20WEAPON%20DISPLAYED
+[{"month": "2025-02", "area": "West LA", "type": "CRIMINAL THREATS - NO WEAPON DISPLAYED", "victim_age": 0, "victim_sex": "X", "location": "JUNIOR HIGH SCHOOL"}, 
+{"month": "2025-01", "area": "West LA", "type": "CRIMINAL THREATS - NO WEAPON DISPLAYED", "victim_age": 0, "victim_sex": "X", "location": "ELEMENTARY SCHOOL"}]
 
 EXAMPLE:
-/crimes?central_park
-[
-	{
-		“date”: “2020-03”
-		“area”: “Central”,
-		“type”: “Assault”,
-		“victim_age”: 46
-		“victim_sex”: M
-		“location”: “Street”
-	}
-]
+/crimes?area=Central
+[{"month": "2025-02", "area": "Central", "type": "OTHER MISCELLANEOUS CRIME", "victim_age": 0, "victim_sex": "M", "location": "DETENTION/JAIL FACILITY"}, 
+{"month": "2025-01", "area": "Central", "type": "CHILD NEGLECT (SEE 300 W.I.C.)", "victim_age": 4, "victim_sex": "F", "location": "HOSPITAL"}]
 
 EXAMPLE:
-/crimes?assault
-[
-	{
-		“date”: “2020-03”
-		“area”: “Central”,
-		“type”: “Assault”,
-		“victim_age”: 46
-		“victim_sex”: M
-		“location”: “Street”
-	}
-]
+/crimes?type=CRIMINAL%20THREATS%20-%20NO%20WEAPON%20DISPLAYED
+[{"month": "2025-03", "area": "Northeast", "type": "CRIMINAL THREATS - NO WEAPON DISPLAYED", "victim_age": 14, "victim_sex": "F", "location": "HIGH SCHOOL"}, 
+..., 
+{"month": "2025-03", "area": "Devonshire", "type": "CRIMINAL THREATS - NO WEAPON DISPLAYED", "victim_age": 16, "victim_sex": "M", "location": "STREET"}]
 
