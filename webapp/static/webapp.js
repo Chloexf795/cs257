@@ -1,177 +1,225 @@
 window.addEventListener('load', initialize);
 
+let crimeChart, ageChart, sexChart;
+
 function initialize() {
-    var elementTypes = document.getElementById('types_selector');
-    if (elementTypes) {
-        elementTypes.onclick = loadTypesSelector();
-    }
-    
-    var elementAreas = document.getElementById('areas_selector');
-    if (elementAreas) {
-        elementAreas.onclick = loadAreasSelector();
-    }
-    var elementStartDates = document.getElementById('start_dates_selector');
-    if (elementStartDates) {
-        elementStartDates.onclick = loadStartDatesSelector();
-    }
-    var elementEndDates = document.getElementById('end_dates_selector');
-    if (elementEndDates) {
-        elementEndDates.onclick = loadEndDatesSelector();
-    }
-    var search = document.getElementById('search_button');
+    loadTypesSelector();
+    loadAreasSelector();
+    loadStartDatesSelector();
+    loadEndDatesSelector();
+
+    const search = document.getElementById('search_button');
     if (search) {
         search.onclick = onCrimesSelectionChanged;
     }
-    
+
+    loadCrimeChart();
+    loadAgeChart();
+    loadSexChart();
 }
 
 function getAPIBaseURL() {
-    var baseURL = window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/api';
-    return baseURL
+    return window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/api';
 }
 
-//onTypesButton()
 function loadTypesSelector() {
-    var url = getAPIBaseURL() + '/types';
+    const url = getAPIBaseURL() + '/types';
 
-    fetch(url, {method: 'get'})
-
-    .then((response) => response.json())
-
-    .then(function(types) {
-        var selectorBody = '';
-        for (var k = 0; k < types.length; k++) {
-            var type = types[k];
-            selectorBody += '<option>' + type.toLowerCase() + '</option>\n' 
-        }
-
-        var selector = document.getElementById('types_selector');
-        if (selector) {
-            selector.innerHTML = selectorBody;
-        }
-    })
-
-    .catch(function(error) {
-        console.log(error);
-    });
+    fetch(url)
+        .then(res => res.json())
+        .then(types => {
+            let body = '';
+            for (const type of types) {
+                body += `<option>${type.toLowerCase()}</option>\n`;
+            }
+            document.getElementById('types_selector').innerHTML = body;
+        });
 }
 
 function loadAreasSelector() {
-    var url = getAPIBaseURL() + '/areas';
+    const url = getAPIBaseURL() + '/areas';
 
-    fetch(url, {method: 'get'})
-
-    .then((response) => response.json())
-
-    .then(function(areas) {
-        var selectorBody = '';
-        for (var k = 0; k < areas.length; k++) {
-            var area = areas[k];
-            selectorBody += '<option>' + area + '</option>\n';
-        }
-
-        var selector = document.getElementById('areas_selector');
-        if (selector) {
-            selector.innerHTML = selectorBody;
-        }
-    })
-
-    .catch(function(error) {
-        console.log(error);
-    });
+    fetch(url)
+        .then(res => res.json())
+        .then(areas => {
+            let body = '';
+            for (const area of areas) {
+                body += `<option>${area}</option>\n`;
+            }
+            document.getElementById('areas_selector').innerHTML = body;
+        });
 }
 
 function loadStartDatesSelector() {
-    var url = getAPIBaseURL() + '/dates';
+    const url = getAPIBaseURL() + '/dates';
 
-    fetch(url, {method: 'get'})
-
-    .then((response) => response.json())
-
-    .then(function(dates) {
-        var selectorBody = '';
-        for (var k = 0; k < dates.length; k++) {
-            var date = dates[k];
-            selectorBody += '<option>' + date + '</option>\n';
-        }
-
-        var selector = document.getElementById('start_dates_selector');
-        if (selector) {
-            selector.innerHTML = selectorBody;
-        }
-    })
-
-    .catch(function(error) {
-        console.log(error);
-    });
+    fetch(url)
+        .then(res => res.json())
+        .then(dates => {
+            let body = '';
+            for (const date of dates) {
+                body += `<option>${date}</option>\n`;
+            }
+            document.getElementById('start_dates_selector').innerHTML = body;
+        });
 }
 
 function loadEndDatesSelector() {
-    var url = getAPIBaseURL() + '/dates';
+    const url = getAPIBaseURL() + '/dates';
 
-    fetch(url, {method: 'get'})
+    fetch(url)
+        .then(res => res.json())
+        .then(dates => {
+            let body = '';
+            for (const date of dates) {
+                body += `<option>${date}</option>\n`;
+            }
+            document.getElementById('end_dates_selector').innerHTML = body;
+        });
+}
 
-    .then((response) => response.json())
-
-    .then(function(dates) {
-        var selectorBody = '';
-        for (var k = 0; k < dates.length; k++) {
-            var date = dates[k];
-            selectorBody += '<option>' + date
-                      + '</option>\n';
+function loadCrimeChart() {
+    const ctx = document.getElementById('crimeChart').getContext('2d');
+    crimeChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ["2025-01", "2025-02", "2025-03"],
+            datasets: [{
+                label: 'Crimes Per Month',
+                data: [0, 0, 0],
+                backgroundColor: 'rgba(54, 162, 235, 0.6)'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } }
         }
+    });
+}
 
-        var endDatesSelectorElement = document.getElementById('end_dates_selector');
-        if (endDatesSelectorElement) {
-            endDatesSelectorElement.innerHTML = selectorBody;
+function loadAgeChart() {
+    const ageCtx = document.getElementById('ageChart').getContext('2d');
+    ageChart = new Chart(ageCtx, {
+        type: 'bar',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Victim Ages',
+                data: [],
+                backgroundColor: 'rgba(255, 99, 132, 0.6)'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } }
         }
-    })
+    });
+}
 
-    .catch(function(error) {
-        console.log(error);
+function loadSexChart() {
+    const sexCtx = document.getElementById('sexChart').getContext('2d');
+    sexChart = new Chart(sexCtx, {
+        type: 'pie',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Victim Sex',
+                data: [],
+                backgroundColor: [
+                    'rgba(255, 159, 64, 0.6)',
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(153, 102, 255, 0.6)'
+                ]
+            }]
+        },
+        options: { responsive: true }
     });
 }
 
 function onCrimesSelectionChanged() {
-    var elementTypes = document.getElementById('types_selector');
-    var elementAreas = document.getElementById('areas_selector');
-    var elementStartDates = document.getElementById('start_dates_selector');
-    var elementEndDates = document.getElementById('end_dates_selector');
-    type = elementTypes.value
-    area = elementAreas.value
-    start_date = elementStartDates.value
-    end_date = elementEndDates.value
+    const type = document.getElementById('types_selector').value;
+    const area = document.getElementById('areas_selector').value;
+    const start_date = document.getElementById('start_dates_selector').value;
+    const end_date = document.getElementById('end_dates_selector').value;
 
-    let url = getAPIBaseURL() + '/crimes?' + 'type=' + type 
-    + '&area=' + area 
-    + '&start_date=' + start_date 
-    + '&end_date=' + end_date
+    const baseURL = getAPIBaseURL();
 
-    fetch(url, {method:'get'})
+    const url = `${baseURL}/crimes?type=${type}&area=${area}&start_month=${start_date}&end_month=${end_date}`;
+    fetch(url)
+        .then(res => res.json())
+        .then(crimes => {
+            let tableBody = `<tr>
+                <td>id</td>
+                <td>victim age</td>
+                <td>victim sex</td>
+                <td>location</td>
+            </tr>\n`;
 
-    .then((response) => response.json())
+            for (let i = 0; i < crimes.length; i++) {
+                const crime = crimes[i];
+                tableBody += `<tr>
+                    <td>${i + 1}</td>
+                    <td>${crime.victim_age}</td>
+                    <td>${crime.victim_sex}</td>
+                    <td>${crime.location}</td>
+                </tr>\n`;
+            }
 
-    .then (function(crimes) {
+            const crimesTable = document.getElementById('crimes_table');
+            if (crimesTable) {
+                crimesTable.innerHTML = tableBody;
+            }
+        });
 
-        tableBody  = '<tr>'
-        + '<td>' + 'id' + '</td>'
-        + '<td>' + 'victim age' + '</td>'
-        + '<td>' + 'victim sex' + '</td>'
-        + '<td>' + 'location' + '</td>'
-        + '</tr>\n';
-        for (let k = 0; k < crimes.length; k++) {
-            let crime = crimes[k];
-            tableBody += '<tr>'
-                            + '<td>' + k+1 + '</td>'
-                            + '<td>' + crime['victim_age'] + '</td>'
-                            + '<td>' + crime['victim_sex'] + '</td>'
-                            + '<td>' + crime['location'] + '</td>'
-                            + '</tr>\n';
-        }
-    })
-    
-    let crimesTable = document.getElementById('crimes_table');
-    if (crimesTable) {
-        crimesTable.innerHTML = tableBody
-    }
+    // Update charts with filtered data
+    const chartUrl = `${baseURL}/charts/filtered?type=${type}&area=${area}&start_month=${start_date}&end_month=${end_date}`;
+    fetch(chartUrl)
+        .then(res => {
+            if (!res.ok) {
+                throw new Error(`HTTP error! status: ${res.status}`);
+            }
+            return res.json();
+        })
+        .then(data => {
+            console.log('Received chart data:', data);
+
+            // Update crime chart
+            crimeChart.data.datasets[0].data = [
+                data.month_counts["2025-01"] || 0,
+                data.month_counts["2025-02"] || 0,
+                data.month_counts["2025-03"] || 0
+            ];
+            crimeChart.update();
+
+            // Update age chart
+            if (data.age_buckets && Object.keys(data.age_buckets).length > 0) {
+                const ageLabels = Object.keys(data.age_buckets);
+                const ageData = Object.values(data.age_buckets);
+                ageChart.data.labels = ageLabels;
+                ageChart.data.datasets[0].data = ageData;
+                ageChart.update();
+            } else {
+                console.log('No age data available');
+                ageChart.data.labels = [];
+                ageChart.data.datasets[0].data = [];
+                ageChart.update();
+            }
+
+            // Update sex chart
+            if (data.sex_counts && Object.keys(data.sex_counts).length > 0) {
+                const sexLabels = Object.keys(data.sex_counts);
+                const sexData = Object.values(data.sex_counts);
+                sexChart.data.labels = sexLabels;
+                sexChart.data.datasets[0].data = sexData;
+                sexChart.update();
+            } else {
+                console.log('No sex data available');
+                sexChart.data.labels = [];
+                sexChart.data.datasets[0].data = [];
+                sexChart.update();
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching chart data:', error);
+        });
 }

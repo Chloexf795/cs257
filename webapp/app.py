@@ -17,6 +17,8 @@ app.register_blueprint(api.api, url_prefix='/api')
 @app.route('/')
 def home():
     return flask.render_template('index.html')
+
+
 """
 @app.route('/index.html')
 def index():
@@ -29,6 +31,7 @@ def mockup1():
 @app.route('/mockup2.html')
 def mockup2():
     return flask.render_template('mockup2.html')
+
 """
 
 if __name__ == '__main__':
