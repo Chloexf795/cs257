@@ -24,27 +24,25 @@
             <p> End Date:</p>
             <select id="end_dates_selector" class="selector"></select>
             <button id="search_button" class="filter-button">Search</button>
-            <p> Table (later will be turned into graphs): </p>
-            <table id="crimes_table" class="table"></table>
+            <!--<p> Table (later will be turned into graphs): </p>
+            <table id="crimes_table" class="table"></table>-->
         </div>
         <div class="main">
+            <h2 class="crime-info">Crime Trend</h2>
             <canvas id="crimeChart" width="600" height="400"></canvas>
+            <h2 class="crime-info">Victim Demographics</h2>
+            <div class="demographics-container">
+                
+                <div id="age" class="demographics-age"> 
+                    <p id="age-text"> victim ages </p>
+                    <canvas id="ageChart" width="400" height="300"></canvas>
+                </div>
+                <div id="sex" class="demographics-sex"> 
+                    <p id="sex-text"> victim sex </p>
+                    <canvas id="sexChart" width="400" height="300"></canvas>
+                </div>
+            </div>
         </div>
     </div>
-
-    <!-- === VICTIM DEMOGRAPHICS SECTION === -->
-    <h1>Victim Demographics</h1>
-
-    <div class="demographics-container">
-        <div id="age" class="demographics-graph"> 
-            victim ages
-            <canvas id="ageChart" width="400" height="300"></canvas>
-        </div>
-        <div id="sex" class="demographics-graph"> 
-            victim sex
-            <canvas id="sexChart" width="400" height="300"></canvas>
-        </div>
-    </div>
-
 </body>
 </html>
