@@ -195,11 +195,13 @@ function onCrimesSelectionChanged() {
             if (data.age_buckets && Object.keys(data.age_buckets).length > 0) {
                 const ageLabels = Object.keys(data.age_buckets);
                 const ageData = Object.values(data.age_buckets);
+                document.getElementById('age-text').innerHTML = "victim sex";
                 ageChart.data.labels = ageLabels;
                 ageChart.data.datasets[0].data = ageData;
                 ageChart.update();
             } else {
                 console.log('No age data available');
+                document.getElementById('age-text').innerHTML = "victim age not available";
                 ageChart.data.labels = [];
                 ageChart.data.datasets[0].data = [];
                 ageChart.update();
@@ -209,11 +211,13 @@ function onCrimesSelectionChanged() {
             if (data.sex_counts && Object.keys(data.sex_counts).length > 0) {
                 const sexLabels = Object.keys(data.sex_counts);
                 const sexData = Object.values(data.sex_counts);
+                document.getElementById('sex-text').innerHTML = "victim sex";
                 sexChart.data.labels = sexLabels;
                 sexChart.data.datasets[0].data = sexData;
                 sexChart.update();
             } else {
                 console.log('No sex data available');
+                document.getElementById('sex-text').innerHTML = "victim sex not available";
                 sexChart.data.labels = [];
                 sexChart.data.datasets[0].data = [];
                 sexChart.update();

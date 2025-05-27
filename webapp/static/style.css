@@ -5,11 +5,14 @@ body {
 }
 
 h1 {
-    text-align: center;
-    padding: 20px 0;
+    padding: 20px;
+    margin-left: 15em;
     background-color: #333;
     color: white;
     margin: 0;
+    position: sticky;
+    top: 0;
+
 }
 
 .container {
@@ -17,30 +20,20 @@ h1 {
     height: 100vh;
 }
 
-.table {
-    border-collapse: collapse;
-}
+.crime-info {
+    text-align: center;
+    padding: 20px;
+    margin-left: 15em;
+    color: black;
+    margin: 0;
+    position: sticky;
+    top: 0;
 
-
-.demographics-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    height: 500px;
-    width: 100%;
-    /*margin-top: 50px;
-    margin-bottom: 50px;*/
-}
-
-.demographics-graph {
-    height: 50%;
-    width: 50%;
-    /*margin-top: 50px;
-    margin-bottom: 50px;*/
 }
 
 .sidebar {
     width: 25%;
+    height: 800px;
     background-color: #f2f2f2;
     padding: 20px;
     box-sizing: border-box;
@@ -65,7 +58,7 @@ h1 {
 
 .selector{
     background: "f0f0f0";
-    width: 150px;
+    width: 80%;
     height: 25px;
 }
 
@@ -77,6 +70,46 @@ img {
     max-width: 100%;
     height: auto;
 }
+
+.table {
+    border-collapse: collapse;
+}
+
+
+.demographics-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    height: 500px;
+    width: 100%;
+    /*margin-top: 50px;
+    margin-bottom: 50px;*/
+}
+
+
+
+.demographics-sex {
+    text-align: center;
+    padding: 20px 0;
+    color: #333;
+    margin: 0;
+    width: 50%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.demographics-age {
+    text-align: center;
+    padding: 20px 0;
+    color: #333;
+    margin: 0;
+    width: 50%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+
+
 
 .back-button {
     display: inline-block;
