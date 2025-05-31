@@ -1,0 +1,20 @@
+User Testing Observations:
+
+Things the testers found easy:
+1. Using dropdown filters to choose crime types and areas.
+2. Understanding the layout and visual structure of the page.
+
+Things the testers had trouble with:
+1. Victim demographics (age and gender) were not clearly labeled or explained; users weren’t sure what the charts were showing.
+2. When a filter selection resulted in no available data, the trend graph did not indicate that explicitly, which caused confusion.
+3. Users felt overwhelmed by the number of crime types and areas in the dropdown menus; it was hard to know where to start.
+4. Several users ran into situations where, after applying filters, no data was shown. They were unsure whether this was an error or due to limited dataset availability.
+
+Other positive comments or observations:
+1. Testers found the overall visual design clear and understandable. 
+
+Other suggestions for improvement:
+1. Adding a message to the graph area when no data is available. (e.g. "No data found for the selected filter.")
+2. Group or prioritize crime types and areas in the filter to reduce overwhelm—possibly use most frequent ones at the top or allow for search.
+3. Switching filters to tags, where users can select multiple features at the same time. 
+4. Adding some data. 
