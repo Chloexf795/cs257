@@ -8,38 +8,72 @@
     <script src="static/webapp.js" defer></script>
 </head>
 <body>
-
-    <h1>LA Crime Data Explorer</h1>
-
-    <!-- === CRIME FILTER + GRAPH === -->
-    <div class="container">
+    <div class="page-container">
+        <!-- Fixed Sidebar -->
         <div class="sidebar">
             <h2>Filters</h2>
-            <p> Type:</p>
-            <select id="types_selector" class="selector"></select>
-            <p> Area:</p>
-            <select id="areas_selector" class="selector"></select>
-            <p> Start Date:</p>
-            <select id="start_dates_selector" class="selector"></select>
-            <p> End Date:</p>
-            <select id="end_dates_selector" class="selector"></select>
-            <button id="search_button" class="filter-button">Search</button>
-            <!--<p> Table (later will be turned into graphs): </p>
-            <table id="crimes_table" class="table"></table>-->
-        </div>
-        <div class="main">
-            <h2 class="crime-info">Crime Trend</h2>
-            <canvas id="crimeChart" width="600" height="400"></canvas>
-            <h2 class="crime-info">Victim Demographics</h2>
-            <div class="demographics-container">
-                
-                <div id="age" class="demographics-age"> 
-                    <p id="age-text"> victim ages </p>
-                    <canvas id="ageChart" width="400" height="300"></canvas>
+            
+            <!-- Types Filter -->
+            <div class="filter-section">
+                <p>Crime Types:</p>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="select-all-types" onclick="toggleAll('types')"> Select All
+                    </label>
+                    <div id="types_selector" class="checkbox-list"></div>
                 </div>
-                <div id="sex" class="demographics-sex"> 
-                    <p id="sex-text"> victim sex </p>
-                    <canvas id="sexChart" width="400" height="300"></canvas>
+            </div>
+
+            <!-- Areas Filter -->
+            <div class="filter-section">
+                <p>Areas:</p>
+                <div class="checkbox-group">
+                    <label>
+                        <input type="checkbox" id="select-all-areas" onclick="toggleAll('areas')"> Select All
+                    </label>
+                    <div id="areas_selector" class="checkbox-list"></div>
+                </div>
+            </div>
+
+            <!-- Dates Filter -->
+            <div class="filter-section">
+                <p>Date Range:</p>
+                <div class="date-range">
+                    <div>
+                        <p>Start:</p>
+                        <select id="start_dates_selector" class="date-selector"></select>
+                    </div>
+                    <div>
+                        <p>End:</p>
+                        <select id="end_dates_selector" class="date-selector"></select>
+                    </div>
+                </div>
+            </div>
+
+            <button id="search_button" class="filter-button">Update Charts</button>
+        </div>
+
+        <!-- Scrollable Main Content -->
+        <div class="main-content">
+            <h1>LA Crime Data Explorer</h1>
+            
+            <!-- Charts Section -->
+            <div class="chart-section">
+                <h2>Crimes Over Time</h2>
+                <canvas id="crimeChart"></canvas>
+            </div>
+
+            <div class="chart-section">
+                <h2>Victim Demographics</h2>
+                <div class="demographics-container">
+                    <div class="demographics-graph">
+                        <p id="age-text">Victim Ages</p>
+                        <canvas id="ageChart"></canvas>
+                    </div>
+                    <div class="demographics-graph">
+                        <p id="sex-text">Victim Sex</p>
+                        <canvas id="sexChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>

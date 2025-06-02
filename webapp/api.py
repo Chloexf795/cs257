@@ -245,8 +245,8 @@ def victimSex():
 def get_filtered_charts():
     start = request.args.get('start_month')
     end = request.args.get('end_month')
-    area = request.args.get('area')
-    ctype = request.args.get('type')
+    areas = request.args.get('areas', '').split(',')
+    types = request.args.get('types', '').split(',')
 
     counts_by_month = {"2025-01": 0, "2025-02": 0, "2025-03": 0}
     age_buckets = {}
@@ -255,6 +255,22 @@ def get_filtered_charts():
     try:
         conn = get_connection()
         cur = conn.cursor()
+
+        # Convert areas and types to lowercase for case-insensitive comparison
+        areas_lower = [area.lower() for area in areas if area]
+        types_lower = [type_.lower() for type_ in types if type_]
+        
+        if not areas_lower or not types_lower:
+            return json.dumps({
+                "month_counts": counts_by_month,
+                "age_buckets": {},
+                "sex_counts": {}
+            })
+
+        # Create the array literals for the SQL query
+        areas_array = "{" + ",".join(f'"{area}"' for area in areas_lower) + "}"
+        types_array = "{" + ",".join(f'"{type_}"' for type_ in types_lower) + "}"
+
         query = '''
             SELECT months.month, crimes.vict_age, crimes.vict_sex
             FROM crimes
@@ -262,12 +278,15 @@ def get_filtered_charts():
             JOIN months ON crime_events.month_id = months.id
             JOIN areas ON crime_events.area_id = areas.id
             JOIN types ON crime_events.type_id = types.id
-            WHERE (%s IS NULL OR months.month >= %s)
-              AND (%s IS NULL OR months.month <= %s)
-              AND (%s IS NULL OR LOWER(areas.area) = LOWER(%s))
-              AND (%s IS NULL OR LOWER(types.type) = LOWER(%s))
+            WHERE (months.month >= %s OR %s IS NULL)
+              AND (months.month <= %s OR %s IS NULL)
+              AND LOWER(areas.area) = ANY(%s::text[])
+              AND LOWER(types.type) = ANY(%s::text[])
         '''
-        params = [start, start, end, end, area, area, ctype, ctype]
+        
+        params = [start, start, end, end, areas_array, types_array]
+        
+        print(f"Executing query with params: {params}", file=sys.stderr)
         cur.execute(query, params)
 
         for month, age, sex in cur.fetchall():
@@ -287,6 +306,8 @@ def get_filtered_charts():
         # Sort age buckets by age range
         sorted_age_buckets = dict(sorted(age_buckets.items(), 
                                        key=lambda x: int(x[0].split('-')[0])))
+
+        print(f"Found data: {counts_by_month}", file=sys.stderr)
 
     except Exception as e:
         print(f"Error in filtered chart API: {e}", file=sys.stderr)

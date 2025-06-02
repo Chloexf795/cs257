@@ -22,17 +22,37 @@ function getAPIBaseURL() {
     return window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/api';
 }
 
+function createCheckbox(value, containerId) {
+    const label = document.createElement('label');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.value = value;
+    checkbox.checked = false; // Default to unchecked
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode(value));
+    document.getElementById(containerId).appendChild(label);
+}
+
+function toggleAll(type) {
+    const selectAllCheckbox = document.getElementById(`select-all-${type}`);
+    const checkboxes = document.getElementById(`${type}_selector`).getElementsByTagName('input');
+    
+    for (let checkbox of checkboxes) {
+        checkbox.checked = selectAllCheckbox.checked;
+    }
+}
+
 function loadTypesSelector() {
     const url = getAPIBaseURL() + '/types';
 
     fetch(url)
         .then(res => res.json())
         .then(types => {
-            let body = '';
+            const container = document.getElementById('types_selector');
+            container.innerHTML = ''; // Clear existing content
             for (const type of types) {
-                body += `<option>${type.toLowerCase()}</option>\n`;
+                createCheckbox(type.toLowerCase(), 'types_selector');
             }
-            document.getElementById('types_selector').innerHTML = body;
         });
 }
 
@@ -42,11 +62,11 @@ function loadAreasSelector() {
     fetch(url)
         .then(res => res.json())
         .then(areas => {
-            let body = '';
+            const container = document.getElementById('areas_selector');
+            container.innerHTML = ''; // Clear existing content
             for (const area of areas) {
-                body += `<option>${area}</option>\n`;
+                createCheckbox(area, 'areas_selector');
             }
-            document.getElementById('areas_selector').innerHTML = body;
         });
 }
 
@@ -56,11 +76,11 @@ function loadStartDatesSelector() {
     fetch(url)
         .then(res => res.json())
         .then(dates => {
-            let body = '';
+            let options = '<option value="">Select Start Date</option>\n';
             for (const date of dates) {
-                body += `<option>${date}</option>\n`;
+                options += `<option value="${date}">${date}</option>\n`;
             }
-            document.getElementById('start_dates_selector').innerHTML = body;
+            document.getElementById('start_dates_selector').innerHTML = options;
         });
 }
 
@@ -70,12 +90,26 @@ function loadEndDatesSelector() {
     fetch(url)
         .then(res => res.json())
         .then(dates => {
-            let body = '';
+            let options = '<option value="">Select End Date</option>\n';
             for (const date of dates) {
-                body += `<option>${date}</option>\n`;
+                options += `<option value="${date}">${date}</option>\n`;
             }
-            document.getElementById('end_dates_selector').innerHTML = body;
+            document.getElementById('end_dates_selector').innerHTML = options;
         });
+}
+
+function getSelectedValues(containerId) {
+    const container = document.getElementById(containerId);
+    const checkboxes = container.getElementsByTagName('input');
+    const selectedValues = [];
+    
+    for (let checkbox of checkboxes) {
+        if (checkbox.checked) {
+            selectedValues.push(checkbox.value);
+        }
+    }
+    
+    return selectedValues;
 }
 
 function loadCrimeChart() {
@@ -137,42 +171,20 @@ function loadSexChart() {
 }
 
 function onCrimesSelectionChanged() {
-    const type = document.getElementById('types_selector').value;
-    const area = document.getElementById('areas_selector').value;
+    const selectedTypes = getSelectedValues('types_selector');
+    const selectedAreas = getSelectedValues('areas_selector');
     const start_date = document.getElementById('start_dates_selector').value;
     const end_date = document.getElementById('end_dates_selector').value;
 
+    if (selectedTypes.length === 0 || selectedAreas.length === 0 || 
+        !start_date || !end_date) {
+        alert('Please select at least one type, one area, and both start and end dates');
+        return;
+    }
+
     const baseURL = getAPIBaseURL();
+    const chartUrl = `${baseURL}/charts/filtered?types=${selectedTypes.join(',')}&areas=${selectedAreas.join(',')}&start_month=${start_date}&end_month=${end_date}`;
 
-    const url = `${baseURL}/crimes?type=${type}&area=${area}&start_month=${start_date}&end_month=${end_date}`;
-    fetch(url)
-        .then(res => res.json())
-        .then(crimes => {
-            let tableBody = `<tr>
-                <td>id</td>
-                <td>victim age</td>
-                <td>victim sex</td>
-                <td>location</td>
-            </tr>\n`;
-
-            for (let i = 0; i < crimes.length; i++) {
-                const crime = crimes[i];
-                tableBody += `<tr>
-                    <td>${i + 1}</td>
-                    <td>${crime.victim_age}</td>
-                    <td>${crime.victim_sex}</td>
-                    <td>${crime.location}</td>
-                </tr>\n`;
-            }
-
-            const crimesTable = document.getElementById('crimes_table');
-            if (crimesTable) {
-                crimesTable.innerHTML = tableBody;
-            }
-        });
-
-    // Update charts with filtered data
-    const chartUrl = `${baseURL}/charts/filtered?type=${type}&area=${area}&start_month=${start_date}&end_month=${end_date}`;
     fetch(chartUrl)
         .then(res => {
             if (!res.ok) {
@@ -195,13 +207,13 @@ function onCrimesSelectionChanged() {
             if (data.age_buckets && Object.keys(data.age_buckets).length > 0) {
                 const ageLabels = Object.keys(data.age_buckets);
                 const ageData = Object.values(data.age_buckets);
-                document.getElementById('age-text').innerHTML = "victim sex";
+                document.getElementById('age-text').innerHTML = "Victim Ages";
                 ageChart.data.labels = ageLabels;
                 ageChart.data.datasets[0].data = ageData;
                 ageChart.update();
             } else {
                 console.log('No age data available');
-                document.getElementById('age-text').innerHTML = "victim age not available";
+                document.getElementById('age-text').innerHTML = "No age data available";
                 ageChart.data.labels = [];
                 ageChart.data.datasets[0].data = [];
                 ageChart.update();
@@ -211,13 +223,13 @@ function onCrimesSelectionChanged() {
             if (data.sex_counts && Object.keys(data.sex_counts).length > 0) {
                 const sexLabels = Object.keys(data.sex_counts);
                 const sexData = Object.values(data.sex_counts);
-                document.getElementById('sex-text').innerHTML = "victim sex";
+                document.getElementById('sex-text').innerHTML = "Victim Sex";
                 sexChart.data.labels = sexLabels;
                 sexChart.data.datasets[0].data = sexData;
                 sexChart.update();
             } else {
                 console.log('No sex data available');
-                document.getElementById('sex-text').innerHTML = "victim sex not available";
+                document.getElementById('sex-text').innerHTML = "No sex data available";
                 sexChart.data.labels = [];
                 sexChart.data.datasets[0].data = [];
                 sexChart.update();
@@ -225,5 +237,6 @@ function onCrimesSelectionChanged() {
         })
         .catch(error => {
             console.error('Error fetching chart data:', error);
+            alert('Error fetching data. Please try again.');
         });
 }

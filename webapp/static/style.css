@@ -1,18 +1,154 @@
-body {
-    font-family: Arial, sans-serif;
+/* Basic Reset */
+* {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
-h1 {
-    padding: 20px;
-    margin-left: 15em;
-    background-color: #333;
-    color: white;
-    margin: 0;
-    position: sticky;
-    top: 0;
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    background-color: #f4f4f4;
+}
 
+/* Page Layout */
+.page-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    width: 300px;
+    background-color: #fff;
+    padding: 20px;
+    position: fixed;
+    height: 100vh;
+    overflow-y: auto;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Main Content Styles */
+.main-content {
+    margin-left: 300px; /* Same as sidebar width */
+    padding: 20px;
+    flex-grow: 1;
+    background-color: #f4f4f4;
+}
+
+/* Filter Section Styles */
+.filter-section {
+    margin-bottom: 20px;
+    background-color: #f8f8f8;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.filter-section p {
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Checkbox Group Styles */
+.checkbox-group {
+    margin-bottom: 15px;
+}
+
+.checkbox-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    background-color: white;
+}
+
+.checkbox-list label {
+    display: block;
+    padding: 5px;
+    cursor: pointer;
+}
+
+.checkbox-list label:hover {
+    background-color: #f0f0f0;
+}
+
+/* Date Selector Styles */
+.date-selector {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    font-size: 14px;
+    color: #333;
+}
+
+.date-selector:focus {
+    outline: none;
+    border-color: #4CAF50;
+}
+
+/* Button Styles */
+.filter-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+.filter-button:hover {
+    background-color: #45a049;
+}
+
+/* Chart Section Styles */
+.chart-section {
+    background-color: white;
+    padding: 20px;
+    margin-bottom: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.demographics-container {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.demographics-graph {
+    flex: 1;
+    min-width: 300px;
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+/* Headings */
+h1 {
+    margin-bottom: 30px;
+    color: #333;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #444;
+}
+
+/* Date Range Styles */
+.date-range {
+    display: flex;
+    gap: 15px;
+}
+
+.date-range > div {
+    flex: 1;
 }
 
 .container {
@@ -31,39 +167,10 @@ h1 {
 
 }
 
-.sidebar {
-    width: 25%;
-    height: 800px;
-    background-color: #f2f2f2;
-    padding: 20px;
-    box-sizing: border-box;
-}
-
-.main {
-    width: 75%;
-    padding: 20px;
-    box-sizing: border-box;
-}
-
-.filter-button {
-    display: block;
-    margin: 10px 0;
-    padding: 10px;
-    background-color: #007BFF;
-    color: white;
-    border: none;
-    cursor: pointer;
-    width: 100%;
-}
-
 .selector{
     background: "f0f0f0";
     width: 80%;
     height: 25px;
-}
-
-.filter-button:hover {
-    background-color: #0056b3;
 }
 
 img {
@@ -74,19 +181,6 @@ img {
 .table {
     border-collapse: collapse;
 }
-
-
-.demographics-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    height: 500px;
-    width: 100%;
-    /*margin-top: 50px;
-    margin-bottom: 50px;*/
-}
-
-
 
 .demographics-sex {
     text-align: center;
@@ -107,9 +201,6 @@ img {
     padding: 20px;
     box-sizing: border-box;
 }
-
-
-
 
 .back-button {
     display: inline-block;
