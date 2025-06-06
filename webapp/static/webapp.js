@@ -255,7 +255,36 @@ function loadSexChart() {
                 legend: {
                     position: 'bottom',
                     labels: {
-                        padding: 20
+                        padding: 20,
+                        generateLabels: function(chart) {
+                            const data = chart.data;
+                            if (data.labels.length && data.datasets.length) {
+                                return data.labels.map((label, i) => {
+                                    const meta = chart.getDatasetMeta(0);
+                                    const style = meta.controller.getStyle(i);
+                                    
+                                    // Add explanations to the labels
+                                    let displayLabel = label;
+                                    if (label === 'X') {
+                                        displayLabel = 'X (Unknown)';
+                                    } else if (label === 'M') {
+                                        displayLabel = 'M (Male)';
+                                    } else if (label === 'F') {
+                                        displayLabel = 'F (Female)';
+                                    } else if (label === '') {
+                                        displayLabel = 'Unknown';
+                                    }
+
+                                    return {
+                                        text: displayLabel,
+                                        fillStyle: style.backgroundColor,
+                                        hidden: isNaN(data.datasets[0].data[i]) || meta.data[i].hidden,
+                                        index: i
+                                    };
+                                });
+                            }
+                            return [];
+                        }
                     }
                 }
             }

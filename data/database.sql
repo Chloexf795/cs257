@@ -4899,7 +4899,7 @@ COPY public.crimes (id, vict_age, vict_sex) FROM stdin;
 133	77	F
 134	72	F
 135	33	X
-136	25	H
+136	25	
 137	74	M
 138	68	M
 139	17	F

@@ -1,7 +1,7 @@
 CREATE TABLE crimes (
     id SERIAL PRIMARY KEY,
     vict_age INTEGER,
-    vict_sex TEXT
+    vict_sex TEXT CHECK (vict_sex IN ('M', 'F', 'X', ''))
 );
 
 CREATE TABLE types (
