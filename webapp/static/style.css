@@ -8,13 +8,15 @@
 body {
     font-family: Arial, sans-serif;
     line-height: 1.6;
-    background-color: #f4f4f4;
+    background-color: #ffffff;
 }
 
 /* Page Layout */
 .page-container {
     display: flex;
-    min-height: 100vh;
+    min-height: 90vh;
+    padding-top: 100px;
+    
 }
 
 /* Sidebar Styles */
@@ -25,7 +27,9 @@ body {
     position: fixed;
     height: 100vh;
     overflow-y: auto;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 0 5px rgba(166, 166, 166, 0.1);
+    padding-bottom: 130px;
+    
 }
 
 /* Main Content Styles */
@@ -33,7 +37,8 @@ body {
     margin-left: 300px; /* Same as sidebar width */
     padding: 20px;
     flex-grow: 1;
-    background-color: #f4f4f4;
+    background-color: #fcfcfc;
+    top: 100px;
 }
 
 /* Filter Section Styles */
@@ -56,7 +61,7 @@ body {
 }
 
 .checkbox-list {
-    max-height: 200px;
+    max-height: 120px;
     overflow-y: auto;
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -76,6 +81,7 @@ body {
 
 /* Date Selector Styles */
 .date-selector {
+    height: 40px;  
     width: 100%;
     padding: 8px;
     border: 1px solid #ddd;
@@ -100,7 +106,7 @@ body {
     border-radius: 4px;
     cursor: pointer;
     font-size: 16px;
-    margin-top: 20px;
+    margin-top: 5px;
 }
 
 .filter-button:hover {
@@ -110,10 +116,11 @@ body {
 /* Chart Section Styles */
 .chart-section {
     background-color: white;
-    padding: 20px;
-    margin-bottom: 30px;
+    padding: 12px;
+    max-height: 500px;
+    margin-bottom: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* much lighter */
 }
 
 .demographics-container {
@@ -215,4 +222,34 @@ img {
 .back-button:hover {
     background-color: #5a6268;
 }
+.fixed-header {
+    position: fixed;
+    top: 10px;
+    left: 20px;
+    z-index: 1000; /* stay on top of other elements */
+    font-size: 40px;
+    background-color: white;
+    padding: 5px 10px;
+    margin: 0;
+    max-width: 4000px;
+    top: 30px;
+}
+.header-bar {
+    padding-top: 20px;
+    background-color: white;
+}
+#crimeChart {
+    height: 100% !important; /* fill the available space */
+}
+.chart-wrapper {
+    height: 400px;
+    overflow: hidden;
+}
+.top-wrapper {
+    background-color: white;
+    width: 100%;
+    position: relative;
+    z-index: 999;
+}
+
 

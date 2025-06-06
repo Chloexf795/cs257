@@ -126,7 +126,10 @@ function loadCrimeChart() {
         },
         options: {
             responsive: true,
-            plugins: { legend: { display: false } }
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
         }
     });
 }
@@ -207,9 +210,16 @@ function onCrimesSelectionChanged() {
                 data.month_counts["2025-01"] || 0,
                 data.month_counts["2025-02"] || 0,
                 data.month_counts["2025-03"] || 0
-              ];
-              
+            ];
             crimeChart.update();
+            const allZero = crimeChart.data.datasets[0].data.every(value => value === 0);
+            if (allZero) {
+                document.getElementById('overall-text').innerHTML = "No crime data";
+            } else {
+                document.getElementById('overall-text').innerHTML = "";
+            }
+                
+            
 
             // Update age chart
             if (data.age_buckets && Object.keys(data.age_buckets).length > 0) {
@@ -245,6 +255,6 @@ function onCrimesSelectionChanged() {
         })
         .catch(error => {
             console.error('Error fetching chart data:', error);
-            alert('Error fetching data. Please try again.');
+            alert('Error fetching chart data');
         });
 }

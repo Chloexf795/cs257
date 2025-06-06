@@ -1,8 +1,7 @@
 CREATE TABLE crimes (
     id SERIAL PRIMARY KEY,
     vict_age INTEGER,
-    vict_sex TEXT,
-    location TEXT
+    vict_sex TEXT
 );
 
 CREATE TABLE types (

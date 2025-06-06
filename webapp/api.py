@@ -248,7 +248,18 @@ def get_filtered_charts():
     areas = request.args.get('areas', '').split(',')
     types = request.args.get('types', '').split(',')
 
-    counts_by_month = {"2025-01": 0, "2025-02": 0, "2025-03": 0}
+    counts_by_month = {
+    "2024-06": 0,
+    "2024-07": 0,
+    "2024-08": 0,
+    "2024-09": 0,
+    "2024-10": 0,
+    "2024-11": 0,
+    "2024-12": 0,
+    "2025-01": 0,
+    "2025-02": 0,
+    "2025-03": 0
+    }
     age_buckets = {}
     sex_counts = {}
 
@@ -314,7 +325,7 @@ def get_filtered_charts():
         return json.dumps({"error": str(e)}), 500
     finally:
         conn.close()
-
+    
     return json.dumps({
         "month_counts": counts_by_month,
         "age_buckets": sorted_age_buckets,

@@ -13,7 +13,7 @@ import csv
 from datetime import datetime
 
 # Input and output paths
-INPUT_FILE = 'data/crimeData2025.csv'
+INPUT_FILE = 'data/2024&2025data.csv'
 
 def main():
     crime_types = {}
@@ -33,27 +33,20 @@ def main():
         for row in reader:
             # Column positions based on file format
             date_occ = row[0]
-            time_occ = row[1]
-            area = row[2]
-            crm_cd_desc = row[3]
-            vict_age = row[4]
-            vict_sex = row[5]
-            '''
-            location = row[6]
-            lat = row[7]
-            lon = row[8]
-            '''
-            premis_desc = row[9]
+            area = row[1]
+            crm_cd_desc = row[2]
+            vict_age = row[3]
+            vict_sex = row[4]
+            crime_type = convert_type(crm_cd_desc)
 
             # Handle crime_types
-            if crm_cd_desc not in crime_types:
-                crime_types[crm_cd_desc] = crime_type_id
+            if crime_type not in crime_types:
+                crime_types[crime_type] = crime_type_id
                 crime_type_id += 1
-            ct_id = crime_types[crm_cd_desc]
+            ct_id = crime_types[crime_type]
 
             # Handle crime_times
-            time_key = (date_occ, time_occ)
-            dt = datetime.strptime(time_key[0], "%m/%d/%Y %I:%M:%S %p")
+            dt = datetime.strptime(date_occ, "%m/%d/%Y %I:%M:%S %p")
             year_month = dt.strftime("%Y-%m")
             if year_month not in crime_times:
                 crime_times[year_month] = time_id
@@ -67,7 +60,7 @@ def main():
                 area_id += 1
             a_id = areas[area]
             
-            crime_key = (vict_age, vict_sex, premis_desc)
+            crime_key = (vict_age, vict_sex)
             if crime_key not in crimes:
                 crimes[crime_key] = crime_id
                 crime_id += 1
@@ -81,6 +74,7 @@ def main():
     with open('data/crime_types.csv', 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
         for desc, id in crime_types.items():
+            print(f'this is crime: {desc}')
             writer.writerow([id, desc])
 
     with open('data/crime_times.csv', 'w', newline='', encoding='utf-8') as f:
@@ -99,13 +93,102 @@ def main():
 
     with open('data/crimes.csv', 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
-        for (vict_age, vict_sex, premis_desc), id in crimes.items():
-            writer.writerow([id, vict_age, vict_sex, premis_desc])
+        for (vict_age, vict_sex), id in crimes.items():
+            writer.writerow([id, vict_age, vict_sex])
 
-    with open('data/crimes_crime_types_crimes_times_locations.csv', 'w', newline='', encoding='utf-8') as f:
+    with open('data/crime_events.csv', 'w', newline='', encoding='utf-8') as f:
         writer = csv.writer(f)
         for ids in crimes_crime_types_crimes_times_areas:
             writer.writerow(ids)
+
+def convert_type(crm_cd_desc):
+    crime_categories = {
+        "theft": [
+            "VEHICLE - STOLEN",
+            "VEHICLE, STOLEN - OTHER (MOTORIZED SCOOTERS, BIKES, ETC)",
+            "THEFT FROM MOTOR VEHICLE - PETTY ($950 & UNDER)",
+            "VEHICLE - ATTEMPT STOLEN",
+            "THEFT-GRAND ($950.01 & OVER)EXCPT,GUNS,FOWL,LIVESTK,PROD",
+            "THEFT OF IDENTITY",
+            "THEFT PLAIN - PETTY ($950 & UNDER)",
+            "THEFT FROM MOTOR VEHICLE - GRAND ($950.01 AND OVER)",
+            "THEFT FROM PERSON - ATTEMPT",
+            "SHOPLIFTING - PETTY THEFT ($950 & UNDER)",
+            "SHOPLIFTING-GRAND THEFT ($950.01 & OVER)",
+            "BIKE - STOLEN",
+            "DEFRAUDING INNKEEPER/THEFT OF SERVICES, $950 & UNDER",
+            "THEFT, PERSON",
+            "DEFRAUDING INNKEEPER/THEFT OF SERVICES, OVER $950.01",
+            "EMBEZZLEMENT, PETTY THEFT ($950 & UNDER)",
+            "EMBEZZLEMENT, GRAND THEFT ($950.01 & OVER)"
+        ],
+        "vandalism": [
+            "VANDALISM - MISDEAMEANOR ($399 OR UNDER)",
+            "VANDALISM - FELONY ($400 & OVER, ALL CHURCH VANDALISMS)",
+            "ARSON"
+        ],
+        "robbery": [
+            "BURGLARY",
+            "BURGLARY FROM VEHICLE",
+            "SHOPLIFTING - ATTEMPT",
+            "BURGLARY FROM VEHICLE, ATTEMPTED",
+            "BURGLARY, ATTEMPTED",
+            "ATTEMPTED ROBBERY",
+            "ROBBERY"
+        ],
+        "assault": [
+            "BATTERY - SIMPLE ASSAULT",
+            "ASSAULT WITH DEADLY WEAPON, AGGRAVATED ASSAULT",
+            "SEX,UNLAWFUL(INC MUTUAL CONSENT, PENETRATION W/ FRGN OBJ",
+            "ASSAULT WITH DEADLY WEAPON ON POLICE OFFICER",
+            "INTIMATE PARTNER - AGGRAVATED ASSAULT",
+            "INTIMATE PARTNER - SIMPLE ASSAULT",
+            "BATTERY POLICE (SIMPLE)",
+            "OTHER ASSAULT"
+        ],
+        "sex crime": [
+            "RAPE, FORCIBLE",
+            "INDECENT EXPOSURE",
+            "BATTERY WITH SEXUAL CONTACT",
+            "LEWD CONDUCT",
+            "ORAL COPULATION",
+            "PIMPING"
+        ],
+        "criminal threats": [
+            "CRIMINAL THREATS - NO WEAPON DISPLAYED",
+            "BRANDISH WEAPON",
+            "STALKING"
+        ],
+        "child crime": [
+            "CHILD ANNOYING (17YRS & UNDER)",
+            "CHILD NEGLECT (SEE 300 W.I.C.)",
+            "CHILD PORNOGRAPHY"
+        ],
+        "other crime": [
+            "OTHER MISCELLANEOUS CRIME",
+            "TRESPASSING",
+            "VIOLATION OF COURT ORDER",
+            "EXTORTION",
+            "ILLEGAL DUMPING",
+            "DRIVING WITHOUT OWNER CONSENT (DWOC)",
+            "LETTERS, LEWD  -  TELEPHONE CALLS, LEWD",
+            "PICKPOCKET",
+            "DISCHARGE FIREARMS/SHOTS FIRED",
+            "DOCUMENT FORGERY / STOLEN FELONY",
+            "FAILURE TO YIELD",
+            "DRUNK ROLL",
+            "CONTEMPT OF COURT",
+            "FALSE IMPRISONMENT",
+            "VIOLATION OF RESTRAINING ORDER",
+            "RESISTING ARREST",
+            "KIDNAPPING",
+            "FALSE POLICE REPORT"
+        ]
+    }
+    for category, crimes in crime_categories.items():
+        if crm_cd_desc in crimes:
+            return category
+    return crm_cd_desc
 
 if __name__ == '__main__':
     main()

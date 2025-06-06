@@ -8,6 +8,9 @@
     <script src="static/webapp.js" defer></script>
 </head>
 <body>
+    <div class="header-bar">
+        <h1 class="fixed-header">LA Crime Data Explorer</h1>
+    </div>
     <div class="page-container">
         <!-- Fixed Sidebar -->
         <div class="sidebar">
@@ -55,12 +58,15 @@
 
         <!-- Scrollable Main Content -->
         <div class="main-content">
-            <h1>LA Crime Data Explorer</h1>
+            
             
             <!-- Charts Section -->
             <div class="chart-section">
-                <h2>Crimes Over Time</h2>
-                <canvas id="crimeChart"></canvas>
+                <h2 >Crimes Over Time</h2>
+                <p id="overall-text"></p>
+                <div class="chart-wrapper">
+                    <canvas id="crimeChart"></canvas>
+                </div>
             </div>
 
             <div class="chart-section">
