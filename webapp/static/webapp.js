@@ -22,6 +22,11 @@ function initialize() {
     loadCrimeChart();
     loadAgeChart();
     loadSexChart();
+
+    const download = document.getElementById('download_button');
+    if (download) {
+        download.onclick = downloadData;
+    }
 }
 
 /**
@@ -329,3 +334,28 @@ function onCrimesSelectionChanged() {
             alert('Error fetching data. Please try again.');
         });
 }
+
+function downloadData() {
+    const selectedTypes = getSelectedValues('types_selector');
+    const selectedAreas = getSelectedValues('areas_selector');
+    const start_date = document.getElementById('start_dates_selector').value;
+    const end_date = document.getElementById('end_dates_selector').value;
+
+    if (selectedTypes.length === 0 || selectedAreas.length === 0 || 
+        !start_date || !end_date) {
+        alert('Please select at least one type, one area, and both start and end dates');
+        return;
+    }
+
+    const baseURL = getAPIBaseURL();
+    const downloadUrl = `${baseURL}/filteredcsv?types=${selectedTypes.join(',')}&areas=${selectedAreas.join(',')}&start_month=${start_date}&end_month=${end_date}`;
+
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = 'crime_data.csv'; // optional, helps with naming
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+

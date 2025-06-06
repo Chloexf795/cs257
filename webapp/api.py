@@ -100,7 +100,7 @@ def get_months():
 def get_rawcsv():
     '''
     Generates and returns a CSV file containing all crime data.
-    The CSV includes: month, area, type, victim age, victim sex, and location.
+    The CSV includes: date, area, type, victim age, and victim sex.
     '''
     try:
         connection = get_connection()
@@ -110,7 +110,7 @@ def get_rawcsv():
         cursor = connection.cursor()
         query = '''
             SELECT months.month, areas.area, types.type,
-                   crimes.vict_age, crimes.vict_sex, crimes.location
+                   crimes.vict_age, crimes.vict_sex
             FROM crimes
             JOIN crime_events ON crimes.id = crime_events.crime_id
             JOIN types ON types.id = crime_events.type_id
@@ -134,7 +134,7 @@ def get_rawcsv():
     def generate():
         output = csv.StringIO()
         writer = csv.writer(output)
-        writer.writerow(['month', 'area', 'type', 'victim_age', 'victim_sex', 'location'])
+        writer.writerow(['month', 'area', 'type', 'victim_age', 'victim_sex'])
         yield output.getvalue()
         output.seek(0)
         output.truncate(0)
@@ -461,3 +461,76 @@ def get_filtered_charts():
         "age_buckets": sorted_age_buckets,
         "sex_counts": sex_counts
     })
+
+
+
+@api.route('/filteredcsv')
+def get_filteredcsv():
+    '''
+    Generates and returns a CSV file containing the filtered crime data.
+    The CSV includes: date, area, type, victim age, victim sex.
+    '''
+    start = request.args.get('start_month')
+    end = request.args.get('end_month')
+    areas = request.args.get('areas', '').split(',')
+    types = request.args.get('types', '').split(',')
+    crimes = []
+    try:
+        connection = get_connection()
+        if not connection:
+            return json.dumps({"error": "Database connection failed"}), 500
+        
+        areas_lower = [area.lower() for area in areas if area]
+        types_lower = [type_.lower() for type_ in types if type_]
+        if not areas_lower or not types_lower:
+            return json.dumps(crimes)
+        
+        areas_array = "{" + ",".join(f'"{area}"' for area in areas_lower) + "}"
+        types_array = "{" + ",".join(f'"{type_}"' for type_ in types_lower) + "}"
+
+        cursor = connection.cursor()
+        query = '''
+            SELECT months.month, areas.area, types.type,
+                   crimes.vict_age, crimes.vict_sex
+            FROM crimes
+            JOIN crime_events ON crimes.id = crime_events.crime_id
+            JOIN types ON types.id = crime_events.type_id
+            JOIN months ON months.id = crime_events.month_id
+            JOIN areas ON areas.id = crime_events.area_id
+            WHERE (months.month >= %s OR %s IS NULL)
+              AND (months.month <= %s OR %s IS NULL)
+              AND LOWER(areas.area) = ANY(%s::text[])
+              AND LOWER(types.type) = ANY(%s::text[])
+        '''
+        params = [start, start, end, end, areas_array, types_array]
+
+        cursor.execute(query, params)
+        rows = cursor.fetchall()
+        
+        if not rows:
+            return json.dumps({"error": "No data found"}), 404
+            
+    except Exception as e:
+        print(f"Error generating CSV: {e}", file=sys.stderr)
+        return json.dumps({"error": "Internal server error"}), 500
+    finally:
+        if 'connection' in locals():
+            connection.close()
+
+    def generate():
+        output = csv.StringIO()
+        writer = csv.writer(output)
+        writer.writerow(['month', 'area', 'type', 'victim_age', 'victim_sex'])
+        yield output.getvalue()
+        output.seek(0)
+        output.truncate(0)
+
+        for row in rows:
+            writer.writerow(row)
+            yield output.getvalue()
+            output.seek(0)
+            output.truncate(0)
+
+    return Response(generate(), 
+                   mimetype='text/csv',
+                   headers={"Content-Disposition": "attachment;filename=crime_data.csv"})
