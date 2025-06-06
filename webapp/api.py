@@ -3,6 +3,7 @@
     api.py
     Owen Xu, Chloe Xufeng
 
+    This file contains the API endpoints for the crime data visualization application.
 '''
 import sys
 import argparse
@@ -16,6 +17,10 @@ from flask import request, Response
 api = flask.Blueprint('api', __name__)
 
 def get_connection():
+    '''
+    Creates and returns a connection to the PostgreSQL database using config parameters.
+    Returns: psycopg2 connection object
+    '''
     try:
         return psycopg2.connect(database = config.database,
                                 user = config.user,
@@ -26,6 +31,7 @@ def get_connection():
 
 @api.route('/areas')
 def get_areas():
+    '''Returns a list of all unique areas in the dataset'''
     areas = []
     try:
         connection = get_connection()
@@ -42,6 +48,7 @@ def get_areas():
 
 @api.route('/types')
 def get_types():
+    '''Returns a list of all crime types in the dataset'''
     types = []
     try:
         connection = get_connection()
@@ -57,22 +64,26 @@ def get_types():
 
 @api.route('/dates')
 def get_months():
+    '''Returns a sorted list of all months in the dataset'''
     months = []
     try:
         connection = get_connection()
         cursor = connection.cursor()
-        query = 'SELECT * FROM months'
+        query = 'SELECT month FROM months ORDER BY month ASC'
         cursor.execute(query)
         for row in cursor:
-            months.append(row[1])
+            months.append(row[0])
     except Exception as e:
         print(e, file=sys.stderr)
     connection.close()
     return json.dumps(months)
 
-
 @api.route('/rawcsv')
 def get_rawcsv():
+    '''
+    Generates and returns a CSV file containing all crime data.
+    The CSV includes: month, area, type, victim age, victim sex, and location.
+    '''
     try:
         connection = get_connection()
         cursor = connection.cursor()
@@ -112,6 +123,13 @@ def get_rawcsv():
 
 @api.route('/crimes')
 def get_crimes():
+    '''
+    Returns filtered crime data based on query parameters:
+    - start_month: Start of date range
+    - end_month: End of date range
+    - area: Specific area to filter by
+    - type: Specific crime type to filter by
+    '''
     start_month = request.args.get('start_month', None)
     end_month = request.args.get('end_month', None)
     area = request.args.get('area', None)
@@ -243,22 +261,24 @@ def victimSex():
 
 @api.route('/charts/filtered')
 def get_filtered_charts():
+    '''
+    Returns aggregated data for all charts based on selected filters:
+    - Crimes by month counts
+    - Age distribution in 10-year buckets
+    - Gender distribution
+    Filters include: date range, areas, and crime types
+    '''
     start = request.args.get('start_month')
     end = request.args.get('end_month')
     areas = request.args.get('areas', '').split(',')
     types = request.args.get('types', '').split(',')
 
+    # Initialize counts for all possible months
     counts_by_month = {
-    "2024-06": 0,
-    "2024-07": 0,
-    "2024-08": 0,
-    "2024-09": 0,
-    "2024-10": 0,
-    "2024-11": 0,
-    "2024-12": 0,
-    "2025-01": 0,
-    "2025-02": 0,
-    "2025-03": 0
+        "2024-06": 0, "2024-07": 0, "2024-08": 0,
+        "2024-09": 0, "2024-10": 0, "2024-11": 0,
+        "2024-12": 0, "2025-01": 0, "2025-02": 0,
+        "2025-03": 0
     }
     age_buckets = {}
     sex_counts = {}
@@ -284,21 +304,21 @@ def get_filtered_charts():
 
         query = '''
             SELECT months.month, crimes.vict_age, crimes.vict_sex
-            FROM crime_events
-            JOIN crimes ON crimes.id = crime_events.crime_id
+            FROM crimes
+            JOIN crime_events ON crimes.id = crime_events.crime_id
             JOIN months ON crime_events.month_id = months.id
             JOIN areas ON crime_events.area_id = areas.id
             JOIN types ON crime_events.type_id = types.id
             WHERE (months.month >= %s OR %s IS NULL)
-            AND (months.month <= %s OR %s IS NULL)
-            AND LOWER(areas.area) = ANY(%s::text[])
-            AND LOWER(types.type) = ANY(%s::text[])
+              AND (months.month <= %s OR %s IS NULL)
+              AND LOWER(areas.area) = ANY(%s::text[])
+              AND LOWER(types.type) = ANY(%s::text[])
         '''
+        
         params = [start, start, end, end, areas_array, types_array]
         
         print(f"Executing query with params: {params}", file=sys.stderr)
         cur.execute(query, params)
-
 
         for month, age, sex in cur.fetchall():
             # Month count
@@ -325,7 +345,7 @@ def get_filtered_charts():
         return json.dumps({"error": str(e)}), 500
     finally:
         conn.close()
-    
+
     return json.dumps({
         "month_counts": counts_by_month,
         "age_buckets": sorted_age_buckets,

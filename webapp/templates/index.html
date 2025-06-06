@@ -3,20 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>LA Crime Data Explorer</title>
+    <!-- Stylesheets and Scripts -->
     <link rel="stylesheet" href="static/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="static/webapp.js" defer></script>
 </head>
 <body>
+    <!-- Fixed Header -->
     <div class="header-bar">
         <h1 class="fixed-header">LA Crime Data Explorer</h1>
     </div>
+    
     <div class="page-container">
-        <!-- Fixed Sidebar -->
+        <!-- Fixed Sidebar with Filter Controls -->
         <div class="sidebar">
             <h2>Filters</h2>
             
-            <!-- Types Filter -->
+            <!-- Crime Types Filter - Checkbox Group -->
             <div class="filter-section">
                 <p>Crime Types:</p>
                 <div class="checkbox-group">
@@ -27,7 +30,7 @@
                 </div>
             </div>
 
-            <!-- Areas Filter -->
+            <!-- Areas Filter - Checkbox Group -->
             <div class="filter-section">
                 <p>Areas:</p>
                 <div class="checkbox-group">
@@ -38,7 +41,7 @@
                 </div>
             </div>
 
-            <!-- Dates Filter -->
+            <!-- Date Range Filter - Dropdown Selectors -->
             <div class="filter-section">
                 <p>Date Range:</p>
                 <div class="date-range">
@@ -53,29 +56,31 @@
                 </div>
             </div>
 
+            <!-- Update Button -->
             <button id="search_button" class="filter-button">Update Charts</button>
         </div>
 
-        <!-- Scrollable Main Content -->
+        <!-- Main Content Area with Charts -->
         <div class="main-content">
-            
-            
-            <!-- Charts Section -->
+            <!-- Crimes Over Time Chart -->
             <div class="chart-section">
-                <h2 >Crimes Over Time</h2>
+                <h2>Crimes Over Time</h2>
                 <p id="overall-text"></p>
                 <div class="chart-wrapper">
                     <canvas id="crimeChart"></canvas>
                 </div>
             </div>
 
+            <!-- Victim Demographics Charts -->
             <div class="chart-section">
                 <h2>Victim Demographics</h2>
                 <div class="demographics-container">
+                    <!-- Age Distribution Chart -->
                     <div class="demographics-graph">
                         <p id="age-text">Victim Ages</p>
                         <canvas id="ageChart"></canvas>
                     </div>
+                    <!-- Gender Distribution Chart -->
                     <div class="demographics-graph">
                         <p id="sex-text">Victim Sex</p>
                         <canvas id="sexChart"></canvas>

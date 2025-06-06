@@ -1,7 +1,13 @@
 window.addEventListener('load', initialize);
 
+// Global chart objects
 let crimeChart, ageChart, sexChart;
 
+/**
+ * Initializes the application:
+ * - Loads filter options (types, areas, dates)
+ * - Initializes charts
+ */
 function initialize() {
     loadTypesSelector();
     loadAreasSelector();
@@ -18,10 +24,18 @@ function initialize() {
     loadSexChart();
 }
 
+/**
+ * Returns the base URL for API endpoints
+ */
 function getAPIBaseURL() {
     return window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/api';
 }
 
+/**
+ * Creates a checkbox input with label
+ * @param {string} value - The checkbox value and label text
+ * @param {string} containerId - ID of the container to append to
+ */
 function createCheckbox(value, containerId) {
     const label = document.createElement('label');
     const checkbox = document.createElement('input');
@@ -33,6 +47,10 @@ function createCheckbox(value, containerId) {
     document.getElementById(containerId).appendChild(label);
 }
 
+/**
+ * Toggles all checkboxes in a group based on "Select All" checkbox
+ * @param {string} type - The type of selector ('types' or 'areas')
+ */
 function toggleAll(type) {
     const selectAllCheckbox = document.getElementById(`select-all-${type}`);
     const checkboxes = document.getElementById(`${type}_selector`).getElementsByTagName('input');
@@ -42,6 +60,9 @@ function toggleAll(type) {
     }
 }
 
+/**
+ * Loads crime type filter options
+ */
 function loadTypesSelector() {
     const url = getAPIBaseURL() + '/types';
 
@@ -56,6 +77,9 @@ function loadTypesSelector() {
         });
 }
 
+/**
+ * Loads area filter options
+ */
 function loadAreasSelector() {
     const url = getAPIBaseURL() + '/areas';
 
@@ -70,6 +94,9 @@ function loadAreasSelector() {
         });
 }
 
+/**
+ * Loads the start date dropdown
+ */
 function loadStartDatesSelector() {
     const url = getAPIBaseURL() + '/dates';
 
@@ -77,6 +104,8 @@ function loadStartDatesSelector() {
         .then(res => res.json())
         .then(dates => {
             let options = '<option value="">Select Start Date</option>\n';
+            // Sort dates to ensure they're in chronological order
+            dates.sort();
             for (const date of dates) {
                 options += `<option value="${date}">${date}</option>\n`;
             }
@@ -84,6 +113,9 @@ function loadStartDatesSelector() {
         });
 }
 
+/**
+ * Loads the end date dropdown
+ */
 function loadEndDatesSelector() {
     const url = getAPIBaseURL() + '/dates';
 
@@ -91,6 +123,8 @@ function loadEndDatesSelector() {
         .then(res => res.json())
         .then(dates => {
             let options = '<option value="">Select End Date</option>\n';
+            // Sort dates to ensure they're in chronological order
+            dates.sort();
             for (const date of dates) {
                 options += `<option value="${date}">${date}</option>\n`;
             }
@@ -98,6 +132,11 @@ function loadEndDatesSelector() {
         });
 }
 
+/**
+ * Gets selected values from a checkbox group
+ * @param {string} containerId - ID of the checkbox container
+ * @returns {Array} Array of selected values
+ */
 function getSelectedValues(containerId) {
     const container = document.getElementById(containerId);
     const checkboxes = container.getElementsByTagName('input');
@@ -112,28 +151,56 @@ function getSelectedValues(containerId) {
     return selectedValues;
 }
 
+/**
+ * Initializes the crime count by month chart, using Chart.js
+ */
 function loadCrimeChart() {
     const ctx = document.getElementById('crimeChart').getContext('2d');
     crimeChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ["2024-06", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03"],
+            labels: [
+                "2024-06", "2024-07", "2024-08", "2024-09", 
+                "2024-10", "2024-11", "2024-12", "2025-01", 
+                "2025-02", "2025-03"
+            ],
             datasets: [{
                 label: 'Crimes Per Month',
-                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                data: Array(10).fill(0),
                 backgroundColor: 'rgba(54, 162, 235, 0.6)'
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
+            plugins: { 
+                legend: { display: false },
+                title: {
+                    display: true,
+                    text: 'Crime Count by Month'
+                }
             },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Crimes'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Month'
+                    }
+                }
+            }
         }
     });
 }
 
+/**
+ * Initializes the victim age distribution chart, using Chart.js
+ */
 function loadAgeChart() {
     const ageCtx = document.getElementById('ageChart').getContext('2d');
     ageChart = new Chart(ageCtx, {
@@ -153,6 +220,9 @@ function loadAgeChart() {
     });
 }
 
+/**
+ * Initializes the victim sex distribution chart, using Chart.js
+ */
 function loadSexChart() {
     const sexCtx = document.getElementById('sexChart').getContext('2d');
     sexChart = new Chart(sexCtx, {
@@ -173,6 +243,10 @@ function loadSexChart() {
     });
 }
 
+/**
+ * Gets new data and updates all charts based on selected filters
+ * Validates that all required filters are selected
+ */
 function onCrimesSelectionChanged() {
     const selectedTypes = getSelectedValues('types_selector');
     const selectedAreas = getSelectedValues('areas_selector');
@@ -198,28 +272,14 @@ function onCrimesSelectionChanged() {
         .then(data => {
             console.log('Received chart data:', data);
 
-            // Update crime chart
-            crimeChart.data.datasets[0].data = [
-                data.month_counts["2024-06"] || 0,
-                data.month_counts["2024-07"] || 0,
-                data.month_counts["2024-08"] || 0,
-                data.month_counts["2024-09"] || 0,
-                data.month_counts["2024-10"] || 0,
-                data.month_counts["2024-11"] || 0,
-                data.month_counts["2024-12"] || 0,
-                data.month_counts["2025-01"] || 0,
-                data.month_counts["2025-02"] || 0,
-                data.month_counts["2025-03"] || 0
+            // Update crime chart with all months
+            const months = [
+                "2024-06", "2024-07", "2024-08", "2024-09", 
+                "2024-10", "2024-11", "2024-12", "2025-01", 
+                "2025-02", "2025-03"
             ];
+            crimeChart.data.datasets[0].data = months.map(month => data.month_counts[month] || 0);
             crimeChart.update();
-            const allZero = crimeChart.data.datasets[0].data.every(value => value === 0);
-            if (allZero) {
-                document.getElementById('overall-text').innerHTML = "No crime data";
-            } else {
-                document.getElementById('overall-text').innerHTML = "";
-            }
-                
-            
 
             // Update age chart
             if (data.age_buckets && Object.keys(data.age_buckets).length > 0) {
@@ -255,6 +315,6 @@ function onCrimesSelectionChanged() {
         })
         .catch(error => {
             console.error('Error fetching chart data:', error);
-            alert('Error fetching chart data');
+            alert('Error fetching data. Please try again.');
         });
 }
