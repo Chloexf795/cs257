@@ -18,22 +18,6 @@ app.register_blueprint(api.api, url_prefix='/api')
 def home():
     return flask.render_template('index.html')
 
-
-"""
-@app.route('/index.html')
-def index():
-    return flask.render_template('index.html')
-
-@app.route('/mockup1.html')
-def mockup1():
-    return flask.render_template('mockup1.html')
-
-@app.route('/mockup2.html')
-def mockup2():
-    return flask.render_template('mockup2.html')
-
-"""
-
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('A tiny Flask application, including API')
     parser.add_argument('host', help='the host to run on')

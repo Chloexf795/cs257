@@ -273,21 +273,21 @@ def get_filtered_charts():
 
         query = '''
             SELECT months.month, crimes.vict_age, crimes.vict_sex
-            FROM crimes
-            JOIN crime_events ON crimes.id = crime_events.crime_id
+            FROM crime_events
+            JOIN crimes ON crimes.id = crime_events.crime_id
             JOIN months ON crime_events.month_id = months.id
             JOIN areas ON crime_events.area_id = areas.id
             JOIN types ON crime_events.type_id = types.id
             WHERE (months.month >= %s OR %s IS NULL)
-              AND (months.month <= %s OR %s IS NULL)
-              AND LOWER(areas.area) = ANY(%s::text[])
-              AND LOWER(types.type) = ANY(%s::text[])
+            AND (months.month <= %s OR %s IS NULL)
+            AND LOWER(areas.area) = ANY(%s::text[])
+            AND LOWER(types.type) = ANY(%s::text[])
         '''
-        
         params = [start, start, end, end, areas_array, types_array]
         
         print(f"Executing query with params: {params}", file=sys.stderr)
         cur.execute(query, params)
+
 
         for month, age, sex in cur.fetchall():
             # Month count
@@ -320,11 +320,3 @@ def get_filtered_charts():
         "age_buckets": sorted_age_buckets,
         "sex_counts": sex_counts
     })
-
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser('A API to get crime data')
-    parser.add_argument('host', help='the host on which this application is running')
-    parser.add_argument('port', type=int, help='the port on which this application is listening')
-    arguments = parser.parse_args()
-    api.run(host=arguments.host, port=arguments.port, debug=True)

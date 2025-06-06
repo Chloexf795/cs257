@@ -117,10 +117,10 @@ function loadCrimeChart() {
     crimeChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ["2025-01", "2025-02", "2025-03"],
+            labels: ["2024-06", "2024-07", "2024-08", "2024-09", "2024-10", "2024-11", "2024-12", "2025-01", "2025-02", "2025-03"],
             datasets: [{
                 label: 'Crimes Per Month',
-                data: [0, 0, 0],
+                data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                 backgroundColor: 'rgba(54, 162, 235, 0.6)'
             }]
         },
@@ -197,10 +197,18 @@ function onCrimesSelectionChanged() {
 
             // Update crime chart
             crimeChart.data.datasets[0].data = [
+                data.month_counts["2024-06"] || 0,
+                data.month_counts["2024-07"] || 0,
+                data.month_counts["2024-08"] || 0,
+                data.month_counts["2024-09"] || 0,
+                data.month_counts["2024-10"] || 0,
+                data.month_counts["2024-11"] || 0,
+                data.month_counts["2024-12"] || 0,
                 data.month_counts["2025-01"] || 0,
                 data.month_counts["2025-02"] || 0,
                 data.month_counts["2025-03"] || 0
-            ];
+              ];
+              
             crimeChart.update();
 
             // Update age chart
