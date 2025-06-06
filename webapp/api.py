@@ -13,6 +13,7 @@ import csv
 import config
 import psycopg2
 from flask import request, Response
+import re
 
 api = flask.Blueprint('api', __name__)
 
@@ -22,61 +23,78 @@ def get_connection():
     Returns: psycopg2 connection object
     '''
     try:
-        return psycopg2.connect(database = config.database,
-                                user = config.user,
-                                password = config.password)
+        return psycopg2.connect(database=config.database,
+                               user=config.user,
+                               password=config.password)
     except Exception as e:
         print(e, file=sys.stderr)
-        exit()
+        return None
 
 @api.route('/areas')
 def get_areas():
     '''Returns a list of all unique areas in the dataset'''
-    areas = []
     try:
         connection = get_connection()
+        if not connection:
+            return json.dumps({"error": "Database connection failed"}), 500
+        
         cursor = connection.cursor()
-        query = 'SELECT * FROM areas'
-        print(query)
+        query = 'SELECT * FROM areas ORDER BY area ASC'
         cursor.execute(query)
-        for row in cursor:
-            areas.append(row[1])
+        areas = [row[1] for row in cursor]
+        connection.close()
+        
+        if not areas:
+            return json.dumps({"error": "No areas found"}), 404
+            
+        return json.dumps(areas)
     except Exception as e:
         print(e, file=sys.stderr)
-    connection.close()
-    return json.dumps(areas)
+        return json.dumps({"error": "Internal server error"}), 500
 
 @api.route('/types')
 def get_types():
     '''Returns a list of all crime types in the dataset'''
-    types = []
     try:
         connection = get_connection()
+        if not connection:
+            return json.dumps({"error": "Database connection failed"}), 500
+            
         cursor = connection.cursor()
-        query = 'SELECT * FROM types'
+        query = 'SELECT * FROM types ORDER BY type ASC'
         cursor.execute(query)
-        for row in cursor:
-            types.append(row[1])
+        types = [row[1] for row in cursor]
+        connection.close()
+        
+        if not types:
+            return json.dumps({"error": "No crime types found"}), 404
+            
+        return json.dumps(types)
     except Exception as e:
         print(e, file=sys.stderr)
-    connection.close()
-    return json.dumps(types)
+        return json.dumps({"error": "Internal server error"}), 500
 
 @api.route('/dates')
 def get_months():
     '''Returns a sorted list of all months in the dataset'''
-    months = []
     try:
         connection = get_connection()
+        if not connection:
+            return json.dumps({"error": "Database connection failed"}), 500
+            
         cursor = connection.cursor()
         query = 'SELECT month FROM months ORDER BY month ASC'
         cursor.execute(query)
-        for row in cursor:
-            months.append(row[0])
+        months = [row[0] for row in cursor]
+        connection.close()
+        
+        if not months:
+            return json.dumps({"error": "No dates found"}), 404
+            
+        return json.dumps(months)
     except Exception as e:
         print(e, file=sys.stderr)
-    connection.close()
-    return json.dumps(months)
+        return json.dumps({"error": "Internal server error"}), 500
 
 @api.route('/rawcsv')
 def get_rawcsv():
@@ -86,6 +104,9 @@ def get_rawcsv():
     '''
     try:
         connection = get_connection()
+        if not connection:
+            return json.dumps({"error": "Database connection failed"}), 500
+            
         cursor = connection.cursor()
         query = '''
             SELECT months.month, areas.area, types.type,
@@ -94,13 +115,18 @@ def get_rawcsv():
             JOIN crime_events ON crimes.id = crime_events.crime_id
             JOIN types ON types.id = crime_events.type_id
             JOIN months ON months.id = crime_events.month_id
-            JOIN areas ON areas.id = crime_events.area_id;
+            JOIN areas ON areas.id = crime_events.area_id
+            ORDER BY months.month ASC;
         '''
         cursor.execute(query)
         rows = cursor.fetchall()
+        
+        if not rows:
+            return json.dumps({"error": "No data found"}), 404
+            
     except Exception as e:
         print(f"Error generating CSV: {e}", file=sys.stderr)
-        return "Database error", 500
+        return json.dumps({"error": "Internal server error"}), 500
     finally:
         if 'connection' in locals():
             connection.close()
@@ -119,7 +145,9 @@ def get_rawcsv():
             output.seek(0)
             output.truncate(0)
 
-    return Response(generate(), mimetype='text/csv', headers={"Content-Disposition": "attachment;filename=crime_data.csv"})
+    return Response(generate(), 
+                   mimetype='text/csv',
+                   headers={"Content-Disposition": "attachment;filename=crime_data.csv"})
 
 @api.route('/crimes')
 def get_crimes():
@@ -135,9 +163,19 @@ def get_crimes():
     area = request.args.get('area', None)
     crime_type = request.args.get('type', None)
 
-    crimes = []
+    date_pattern = r'^\d{4}-\d{2}$'
+    
+    # Validate date format if provided
+    if start_month and not re.match(date_pattern, start_month):
+        return json.dumps({"error": "Invalid start_month format. Use YYYY-MM"}), 400
+    if end_month and not re.match(date_pattern, end_month):
+        return json.dumps({"error": "Invalid end_month format. Use YYYY-MM"}), 400
+
     try:
         connection = get_connection()
+        if not connection:
+            return json.dumps({"error": "Database connection failed"}), 500
+            
         cursor = connection.cursor()
 
         query = '''
@@ -161,13 +199,14 @@ def get_crimes():
             query += ' AND LOWER(types.type) = LOWER(%s)'
             params.append(crime_type)
 
+        query += ' ORDER BY months.month ASC'
         cursor.execute(query, params)
         rows = cursor.fetchall()
 
         if not rows:
-            print("No records found for the given filters.", file=sys.stderr)
-            return json.dumps({"message": "No records found"}), 404
+            return json.dumps({"message": "No records found for the given criteria"}), 404
 
+        crimes = []
         for row in rows:
             if len(row) == 6:
                 crimes.append({
@@ -183,40 +222,111 @@ def get_crimes():
 
     except Exception as e:
         print(f"Error retrieving crimes: {e}", file=sys.stderr)
-        return "Database error", 500
+        return json.dumps({"error": "Internal server error"}), 500
     finally:
-        connection.close()
-    return json.dumps(crimes)
+        if 'connection' in locals():
+            connection.close()
 
-@api.route('/')
-def hello():
-    return 'Hello, Welcome to Crime Data.'
+    return json.dumps(crimes)
 
 @api.route('/help')
 def get_help():
     return flask.render_template('help.html')
 
 @api.route('/charts/crimesOverTime')
-def crimesOverTime():
-    data = {}
+def crimes_over_time():
+    '''
+    Returns aggregated data for visualization based on selected filters
+    '''
+    start = request.args.get('start_month')
+    end = request.args.get('end_month')
+    areas = request.args.get('areas', '').split(',')
+    types = request.args.get('types', '').split(',')
+
+    # Validate required parameters
+    if not all([start, end, areas[0], types[0]]):
+        return json.dumps({
+            "error": "Missing required parameters. Required: start_month, end_month, areas, types"
+        }), 400
+
+    # Validate date format
+    if not (start.match(r'^\d{4}-\d{2}$') and end.match(r'^\d{4}-\d{2}$')):
+        return json.dumps({
+            "error": "Invalid date format. Use YYYY-MM"
+        }), 400
+
     try:
         conn = get_connection()
+        if not conn:
+            return json.dumps({"error": "Database connection failed"}), 500
+
         cur = conn.cursor()
+
+        # Convert areas and types to lowercase for case-insensitive comparison
+        areas_lower = [area.lower() for area in areas if area]
+        types_lower = [type_.lower() for type_ in types if type_]
+        
+        if not areas_lower or not types_lower:
+            return json.dumps({
+                "error": "At least one area and one type must be selected"
+            }), 400
+
+        # Create the array literals for the SQL query
+        areas_array = "{" + ",".join(f'"{area}"' for area in areas_lower) + "}"
+        types_array = "{" + ",".join(f'"{type_}"' for type_ in types_lower) + "}"
+
         query = '''
-            SELECT months.month, COUNT(*)
-            FROM crime_events
-            JOIN months ON crime_events.month_id = months.id
-            GROUP BY months.month
-            ORDER BY months.month
+            SELECT months.month, crimes.vict_age, crimes.vict_sex
+            FROM crimes
+            JOIN crime_events ON crimes.id = crime_events.crime_id
+            JOIN types ON types.id = crime_events.type_id
+            JOIN months ON months.id = crime_events.month_id
+            JOIN areas ON areas.id = crime_events.area_id
+            WHERE months.month BETWEEN %s AND %s
+            AND LOWER(areas.area) = ANY(%s)
+            AND LOWER(types.type) = ANY(%s)
+            ORDER BY months.month ASC;
         '''
-        cur.execute(query)
-        for month, count in cur.fetchall():
-            data[month] = count
+        
+        cur.execute(query, (start, end, areas_array, types_array))
+        rows = cur.fetchall()
+
+        if not rows:
+            return json.dumps({"message": "No data found for the given criteria"}), 404
+
+        # Initialize data structures for aggregation
+        month_counts = {}
+        age_buckets = {}
+        sex_counts = {'M': 0, 'F': 0, 'X': 0}
+
+        # Process the results
+        for row in rows:
+            month, age, sex = row
+            
+            # Count by month
+            month_counts[month] = month_counts.get(month, 0) + 1
+            
+            # Count by age bucket
+            if age and age > 0:
+                bucket = f"{(age // 10) * 10}-{(age // 10) * 10 + 9}"
+                age_buckets[bucket] = age_buckets.get(bucket, 0) + 1
+            
+            # Count by sex
+            if sex in sex_counts:
+                sex_counts[sex] += 1
+
+        return json.dumps({
+            "month_counts": month_counts,
+            "age_buckets": age_buckets,
+            "sex_counts": sex_counts
+        })
+
     except Exception as e:
-        print(e, file=sys.stderr)
+        print(f"Error generating chart data: {e}", file=sys.stderr)
+        return json.dumps({"error": "Internal server error"}), 500
     finally:
-        conn.close()
-    return json.dumps(data)
+        if 'conn' in locals():
+            conn.close()
 
 @api.route('/charts/victimAges')
 def victimAges():

@@ -16,7 +16,6 @@ body {
     display: flex;
     min-height: 90vh;
     padding-top: 100px;
-    
 }
 
 /* Sidebar Styles */
@@ -29,7 +28,6 @@ body {
     overflow-y: auto;
     box-shadow: 2px 0 5px rgba(166, 166, 166, 0.1);
     padding-bottom: 130px;
-    
 }
 
 /* Main Content Styles */
@@ -89,6 +87,7 @@ body {
     background-color: white;
     font-size: 14px;
     color: #333;
+    margin-bottom: 15px;
 }
 
 .date-selector:focus {
@@ -120,7 +119,7 @@ body {
     max-height: 500px;
     margin-bottom: 20px;
     border-radius: 8px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* much lighter */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .demographics-container {
@@ -137,6 +136,13 @@ body {
     border-radius: 8px;
 }
 
+/* Adjust pie chart size */
+.demographics-graph canvas {
+    max-height: 300px;
+    width: auto !important;
+    margin: 0 auto;
+}
+
 /* Headings */
 h1 {
     margin-bottom: 30px;
@@ -151,11 +157,16 @@ h2 {
 /* Date Range Styles */
 .date-range {
     display: flex;
-    gap: 15px;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .date-range > div {
-    flex: 1;
+    width: 100%;
+}
+
+.date-range p {
+    margin-bottom: 5px;
 }
 
 .container {
@@ -171,10 +182,9 @@ h2 {
     margin: 0;
     position: sticky;
     top: 0;
-
 }
 
-.selector{
+.selector {
     background: "f0f0f0";
     width: 80%;
     height: 25px;
@@ -222,11 +232,12 @@ img {
 .back-button:hover {
     background-color: #5a6268;
 }
+
 .fixed-header {
     position: fixed;
     top: 10px;
     left: 20px;
-    z-index: 1000; /* stay on top of other elements */
+    z-index: 1000;
     font-size: 40px;
     background-color: white;
     padding: 5px 10px;
@@ -234,17 +245,21 @@ img {
     max-width: 4000px;
     top: 30px;
 }
+
 .header-bar {
     padding-top: 20px;
     background-color: white;
 }
+
 #crimeChart {
-    height: 100% !important; /* fill the available space */
+    height: 100% !important;
 }
+
 .chart-wrapper {
     height: 400px;
     overflow: hidden;
 }
+
 .top-wrapper {
     background-color: white;
     width: 100%;

@@ -1,39 +1,165 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Crime Data API reference</title>
+    <title>Crime Data API Reference</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .endpoint {
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 20px;
+        }
+        .method {
+            color: #2c5282;
+            font-weight: bold;
+        }
+        .url {
+            background: #f7fafc;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        pre {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .parameter {
+            margin-left: 20px;
+        }
+        h1, h2 {
+            color: #2d3748;
+        }
+    </style>
 </head>
 <body>
-<pre>Crime Data API - Help
+    <h1>Crime Data API Reference</h1>
+    <p>Welcome to the Crime Data API! This API provides access to crime statistics and related data.</p>
 
-Welcome to the Crime Data API! Below are the available endpoints and their usage:
+    <div class="endpoint">
+        <h2>1. Get Areas</h2>
+        <p class="method">GET</p>
+        <p class="url">/api/areas</p>
+        <p><strong>Description:</strong> Returns a list of all available crime areas.</p>
+        <p><strong>Response Format:</strong> JSON array of strings</p>
+        <pre>
+["Topanga", "Northeast", "Harbor", "Newton", ...]</pre>
+    </div>
 
-1. GET /
-    - Description: Returns a simple welcome message.
-   
-1. GET /help
-    - Description: This page
+    <div class="endpoint">
+        <h2>2. Get Crime Types</h2>
+        <p class="method">GET</p>
+        <p class="url">/api/types</p>
+        <p><strong>Description:</strong> Returns a list of all crime types in the dataset.</p>
+        <p><strong>Response Format:</strong> JSON array of strings</p>
+        <pre>
+["BATTERY - SIMPLE ASSAULT", "OTHER MISCELLANEOUS CRIME", ...]</pre>
+    </div>
 
-2. GET /areas
-    - Description: Retrieves a list of all available crime areas.
+    <div class="endpoint">
+        <h2>3. Get Available Dates</h2>
+        <p class="method">GET</p>
+        <p class="url">/api/dates</p>
+        <p><strong>Description:</strong> Returns a sorted list of all months available in the dataset.</p>
+        <p><strong>Response Format:</strong> JSON array of strings in YYYY-MM format</p>
+        <pre>
+["2024-06", "2024-07", "2024-08", ...]</pre>
+    </div>
 
-3. GET /types
-    - Description: Retrieves a list of all crime types.
+    <div class="endpoint">
+        <h2>4. Get Crime Data</h2>
+        <p class="method">GET</p>
+        <p class="url">/api/crimes</p>
+        <p><strong>Description:</strong> Returns filtered crime data based on specified parameters. All parameters are optional - you can use any combination of them to filter the data.</p>
+        
+        <h3>Query Parameters:</h3>
+        <div class="parameter">
+            <p><strong>start_month</strong></p>
+            <ul>
+                <li>Format: YYYY-MM (e.g., 2024-06)</li>
+            </ul>
 
-4. GET /months
-    - Description: Retrieves a list of all recorded crime months.
+            <p><strong>end_month</strong></p>
+            <ul>
+                <li>Format: YYYY-MM (e.g., 2025-03)</li>
+            </ul>
 
-5. GET /rawcsv
-    - Description: Downloads the entire crime dataset in CSV format.
+            <p><strong>area</strong></p>
+            <ul>
+                <li>Must match exactly one of the areas from the /api/areas endpoint</li>
+                <li>Case-insensitive (e.g., "West LA" or "west la" are both valid)</li>
+            </ul>
 
-6. GET /crimes
-    - Description: Retrieves crime data filtered by month, area, and/or crime type.
-    - Query Parameters:
-        - start_month: Filter crimes that occurred on or after this month (yyyy-mm).
-        - end_month: Filter crimes that occurred on or before this month (yyyy-mm).
-        - area: Filter crimes from a specific location.
-        - type: Filter crimes by the crime type.
-    - Example: curl "http://localhost:8888/crimes?start_month=2025-01&area=West%20LA&type=CRIMINAL%20THREATS%20-%20NO%20WEAPON%20DISPLAYED"
-    </pre>
+            <p><strong>type</strong></p>
+            <ul>
+                <li>Must match exactly one of the types from the /api/types endpoint</li>
+                <li>Case-insensitive</li>
+            </ul>
+        </div>
+
+        <h3>Response Format:</h3>
+        <p>Returns a JSON array of crime objects. Each object contains:</p>
+
+        <h3>Examples:</h3>
+        <p>1. Get all crimes in West LA area:</p>
+        <pre class="url">GET /api/crimes?area=West%20LA</pre>
+        
+        <p>2. Get crimes of a specific type in a date range:</p>
+        <pre class="url">GET /api/crimes?start_month=2024-06&end_month=2024-12&type=BATTERY%20-%20SIMPLE%20ASSAULT</pre>
+        
+        <p>3. Get crimes in a specific area and type:</p>
+        <pre class="url">GET /api/crimes?area=Central&type=ROBBERY</pre>
+
+        <p>Example Response:</p>
+        <pre>
+[
+    {
+        "month": "2024-06",
+        "area": "West LA",
+        "type": "BATTERY - SIMPLE ASSAULT",
+        "victim_age": 25,
+        "victim_sex": "M",
+        "location": "STREET"
+    },
+    {
+        "month": "2024-07",
+        "area": "West LA",
+        "type": "BATTERY - SIMPLE ASSAULT",
+        "victim_age": 32,
+        "victim_sex": "F",
+        "location": "RESIDENCE"
+    }
+]</pre>
+
+        <h3>Error Responses:</h3>
+        <ul>
+            <li><strong>400 Bad Request:</strong>
+                <ul>
+                    <li>Invalid date format (must be YYYY-MM)</li>
+                    <li>Invalid area name (must match one from /api/areas)</li>
+                    <li>Invalid crime type (must match one from /api/types)</li>
+                </ul>
+            </li>
+            <li><strong>404 Not Found:</strong> No records match the specified criteria</li>
+            <li><strong>500 Internal Server Error:</strong> Database or server error</li>
+        </ul>
+    </div>
+
+    <div class="endpoint">
+        <h2>5. Download Raw CSV Data</h2>
+        <p class="method">GET</p>
+        <p class="url">/api/rawcsv</p>
+        <p><strong>Description:</strong> Downloads the complete crime dataset in CSV format.</p>
+        <p><strong>Response Format:</strong> CSV file with headers:</p>
+        <pre>month,area,type,victim_age,victim_sex,location</pre>
+    </div>
+
 </body>
 </html>
