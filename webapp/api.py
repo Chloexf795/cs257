@@ -180,7 +180,7 @@ def get_crimes():
 
         query = '''
             SELECT months.month, areas.area, types.type,
-                   crimes.vict_age, crimes.vict_sex, crimes.location
+                   crimes.vict_age, crimes.vict_sex
             FROM crimes
             JOIN crime_events ON crimes.id = crime_events.crime_id
             JOIN types ON types.id = crime_events.type_id
@@ -202,20 +202,20 @@ def get_crimes():
         query += ' ORDER BY months.month ASC'
         cursor.execute(query, params)
         rows = cursor.fetchall()
-
+        print(rows)
         if not rows:
             return json.dumps({"message": "No records found for the given criteria"}), 404
 
+
         crimes = []
         for row in rows:
-            if len(row) == 6:
+            if len(row) == 5:
                 crimes.append({
-                    "month": row[0],
+                    "date": row[0],
                     "area": row[1],
                     "type": row[2],
                     "victim_age": row[3],
-                    "victim_sex": row[4],
-                    "location": row[5]
+                    "victim_sex": row[4]
                 })
             else:
                 print(f"Unexpected row format: {row}", file=sys.stderr)
