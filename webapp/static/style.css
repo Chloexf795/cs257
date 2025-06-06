@@ -19,15 +19,30 @@ body {
 }
 
 /* Sidebar Styles */
+
 .sidebar {
     width: 300px;
     background-color: #fff;
     padding: 20px;
     position: fixed;
     height: 100vh;
-    overflow-y: auto;
+    overflow-y: scroll;          /* Always show vertical scrollbar */
+    overflow-x: hidden;
     box-shadow: 2px 0 5px rgba(166, 166, 166, 0.1);
     padding-bottom: 130px;
+    scrollbar-gutter: stable;    /* Reserve space for scrollbar */
+}
+.sidebar::-webkit-scrollbar {
+    width: 10px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: #eee;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: #999;
+    border-radius: 4px;
 }
 
 /* Main Content Styles */
@@ -59,12 +74,28 @@ body {
 }
 
 .checkbox-list {
-    max-height: 120px;
-    overflow-y: auto;
+    max-height: 80px;
+    overflow-y: scroll;
+    overflow-x: hidden;
     border: 1px solid #ddd;
     border-radius: 4px;
     padding: 10px;
     background-color: white;
+    width: 100%; /* or 300px to match layout */
+    scrollbar-gutter: stable;
+}
+
+.checkbox-list::-webkit-scrollbar {
+    width: 10px;
+}
+
+.checkbox-list::-webkit-scrollbar-track {
+    background: #eee;
+}
+
+.checkbox-list::-webkit-scrollbar-thumb {
+    background-color: #888;
+    border-radius: 4px;
 }
 
 .checkbox-list label {
@@ -79,15 +110,15 @@ body {
 
 /* Date Selector Styles */
 .date-selector {
-    height: 40px;  
+    height: 30px;  
     width: 100%;
-    padding: 8px;
+    padding: 6px;
     border: 1px solid #ddd;
     border-radius: 4px;
     background-color: white;
     font-size: 14px;
     color: #333;
-    margin-bottom: 15px;
+    margin-bottom: 8px;
 }
 
 .date-selector:focus {
@@ -152,6 +183,7 @@ h1 {
 h2 {
     margin-bottom: 20px;
     color: #444;
+    font-size: 20;
 }
 
 /* Date Range Styles */
@@ -257,7 +289,9 @@ img {
 
 .chart-wrapper {
     height: 400px;
-    overflow: hidden;
+    display: flex;
+    justify-content: center;  
+    align-items: center;   
 }
 
 .top-wrapper {
@@ -266,5 +300,17 @@ img {
     position: relative;
     z-index: 999;
 }
+.filter-button:first-of-type {
+    margin-bottom: 12px;  /* increase spacing between the two buttons */
+}
+.chart-subtitle {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: #727272;
+    margin-bottom: 10px;
+}
+
+
 
 

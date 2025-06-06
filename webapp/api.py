@@ -297,7 +297,7 @@ def crimes_over_time():
         # Initialize data structures for aggregation
         month_counts = {}
         age_buckets = {}
-        sex_counts = {'M': 0, 'F': 0, 'X': 0}
+        sex_counts = {'M': 0, 'F': 0, 'Unknown': 0}
 
         # Process the results
         for row in rows:
@@ -398,8 +398,8 @@ def get_filtered_charts():
         cur = conn.cursor()
 
         # Convert areas and types to lowercase for case-insensitive comparison
-        areas_lower = [area.lower() for area in areas if area]
-        types_lower = [type_.lower() for type_ in types if type_]
+        areas_lower = [area.lower().lstrip() for area in areas if area]
+        types_lower = [type_.lower().lstrip() for type_ in types if type_]
         
         if not areas_lower or not types_lower:
             return json.dumps({
@@ -480,8 +480,8 @@ def get_filteredcsv():
         if not connection:
             return json.dumps({"error": "Database connection failed"}), 500
         
-        areas_lower = [area.lower() for area in areas if area]
-        types_lower = [type_.lower() for type_ in types if type_]
+        areas_lower = [area.lower().lstrip() for area in areas if area]
+        types_lower = [type_.lower().lstrip() for type_ in types if type_]
         if not areas_lower or not types_lower:
             return json.dumps(crimes)
         

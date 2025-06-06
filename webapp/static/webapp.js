@@ -77,7 +77,11 @@ function loadTypesSelector() {
             const container = document.getElementById('types_selector');
             container.innerHTML = ''; // Clear existing content
             for (const type of types) {
-                createCheckbox(type.toLowerCase(), 'types_selector');
+                const type_words = type.split(" ");
+                for (let i = 0; i < type_words.length; i++) {
+                    type_words[i] = type_words[i][0].toUpperCase() + type_words[i].substr(1);
+                }
+                createCheckbox(' '+ type_words.join(" "), 'types_selector');
             }
         });
 }
@@ -94,7 +98,7 @@ function loadAreasSelector() {
             const container = document.getElementById('areas_selector');
             container.innerHTML = ''; // Clear existing content
             for (const area of areas) {
-                createCheckbox(area, 'areas_selector');
+                createCheckbox(' '+ area, 'areas_selector');
             }
         });
 }
@@ -335,6 +339,9 @@ function onCrimesSelectionChanged() {
         });
 }
 
+/**
+ * Download the csv file based on the selected filters
+ */
 function downloadData() {
     const selectedTypes = getSelectedValues('types_selector');
     const selectedAreas = getSelectedValues('areas_selector');
