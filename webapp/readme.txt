@@ -1,4 +1,4 @@
-AUTHORS: Chloe Xu and Owen Xu
+AUTHORS: Chloe Xufeng and Owen Xu
 
 DATA: 
 This project uses partial Los Angeles crime data from June 2024 to March 2025. 

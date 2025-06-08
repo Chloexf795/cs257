@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
 '''
-    tinyapp.py
-    Jeff Ondich
-    Updated: 5 November 2021
+    api.py
+    Owen Xu, Chloe Xufeng
 
-    A tiny Flask web application, including API and Javascript,
-    to be used as a template for setting up your web app assignment.
+    This file contains the API endpoints for the crime data visualization application.
 '''
 import argparse
 import flask
@@ -14,6 +12,7 @@ import api
 app = flask.Flask(__name__, static_folder='static', template_folder='templates')
 app.register_blueprint(api.api, url_prefix='/api')
 
+# Define the home route, which serves the index.html template
 @app.route('/')
 def home():
     return flask.render_template('index.html')
