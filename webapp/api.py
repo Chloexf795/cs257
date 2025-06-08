@@ -202,7 +202,6 @@ def get_crimes():
         query += ' ORDER BY months.month ASC'
         cursor.execute(query, params)
         rows = cursor.fetchall()
-        print(rows)
         if not rows:
             return json.dumps({"message": "No records found for the given criteria"}), 404
 
@@ -427,7 +426,6 @@ def get_filtered_charts():
         
         params = [start, start, end, end, areas_array, types_array]
         
-        print(f"Executing query with params: {params}", file=sys.stderr)
         cur.execute(query, params)
 
         for month, age, sex in cur.fetchall():
@@ -448,7 +446,6 @@ def get_filtered_charts():
         sorted_age_buckets = dict(sorted(age_buckets.items(), 
                                        key=lambda x: int(x[0].split('-')[0])))
 
-        print(f"Found data: {counts_by_month}", file=sys.stderr)
 
     except Exception as e:
         print(f"Error in filtered chart API: {e}", file=sys.stderr)
